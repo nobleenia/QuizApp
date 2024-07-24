@@ -1,0 +1,214 @@
+.home-header, .profile-header {
+    display: flex;
+    align-items: center;
+    background-color: #07610a;
+    padding: 1rem;
+  }
+  
+  .user-image, .profile_image {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 1rem;
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .profile-image-large {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    margin-right: 1rem;
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .user-image:hover, .profile-image:hover, .profile-image-large:hover {
+    transform: scale(1.1);
+  }
+  
+  .home-title {
+    flex-grow: 1;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: white;
+  }
+  
+  .layout-button {
+    background-color: transparent;
+    border: 2px solid white;
+    color: white;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 10px;
+  }
+  
+  .layout-button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .home-main {
+    padding: 2rem;
+  }
+  
+  .header-section, .profile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+  
+  .welcome-section h2,
+  .search-section, .profile-info, .badge-section {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  
+  .search-input {
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  .categories-section, .trending-section, .achievements-section {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    overflow: hidden;
+  }
+  
+  .categories, .achievements-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 0.25rem;
+  }
+  
+  .category, .achievement {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .category-icon, .achievement img {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 0.5rem;
+    transition: transform 0.5s ease-in-out;
+  }
+  
+  .category-icon:hover, .achievement img:hover {
+    transform: scale(1.2) rotate(180deg);
+  }
+  
+  .show-more {
+    display: block;
+    margin: 1rem auto;
+    background-color: #07610a;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 10px;
+  }
+  
+  .trending-section,
+  .invite-section {
+    margin-top: 2rem;
+  }
+
+  /* Invite Section */
+.invite-section {
+    text-align: center;
+    margin-top: auto;
+    margin-bottom: 1rem;
+  }
+  
+  .invite-section p {
+    cursor: pointer;
+    text-decoration: underline;
+    font-size: 1.5rem; /* Increase the font size */
+    font-family: 'Cursive', sans-serif; /* Change to a decorative font */
+    font-weight: bold; /* Optional: Make the text bold */
+    color: #07610a; /* Optional: Change the color */
+    cursor: pointer; /* Make it clear that it's clickable */
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .invite-section:hover {
+    transform: scale(1.05); /* Slightly enlarge on hover for emphasis */
+  }
+  
+  .invite-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border: 1px solid #ddd;
+    padding: 2rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+  }
+  
+  .invite-popup .invite-content {
+    text-align: center;
+  }
+  
+  .invite-popup .invite-content h3 {
+    margin-bottom: 1rem;
+  }
+  
+  .invite-popup .invite-content p {
+    margin-bottom: 1rem;
+  }
+  
+  .invite-popup .invite-content button {
+    background-color: #07610a;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    border-radius: 10px;
+  }
+  
+  /* Profile Specific Styles */
+.profile-main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .profile-info {
+    width: 100%;
+    max-width: 800px;
+  }
+  
+  .profile-info h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+  
+  .profile-section {
+    margin-bottom: 1.5rem;
+  }
+  
+  .profile-section h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  /* Badge Styles */
+  .badge-icon {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .user-points, .user-level {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+  }

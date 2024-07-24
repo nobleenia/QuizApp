@@ -5,6 +5,8 @@ import LandingPage from './components/LandingPage';
 import SignUp from './components/SignUp';
 import Login from './components/Login';
 import Verification from './components/Verification';
+import HomeScreen from './components/HomeScreen';
+import ProfileScreen from './components/ProfileScreen';
 import './App.css';
 
 const App = () => {
@@ -27,6 +29,8 @@ const App = () => {
             <Route path="/signup" element={<SignUp />} />
             <Route path="/login" element={<Login />} />
             <Route path="/verification" element={<Verification />} />
+            <Route path="/home" element={<HomeScreen />} />
+            <Route path="/profile" element={<ProfileScreen />} />
           </Routes>
         )}
       </div>

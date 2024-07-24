@@ -1,18 +1,23 @@
 import React, { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Auth.css';
 import logo from '../assets/logo.png';
 
 const Verification = () => {
   const [code, setCode] = useState(['', '', '', '', '', '']);
   const inputsRef = useRef([]);
+  const navigate = useNavigate();
 
   const handleChange = (e, index) => {
-    const newCode = [...code];
-    newCode[index] = e.target.value;
-    setCode(newCode);
+    const { value } = e.target;
+    if (/^[0-9]$/.test(value) || value === '') {
+      const newCode = [...code];
+      newCode[index] = e.target.value;
+      setCode(newCode);
 
-    if (e.target.value && index < code.length - 1) {
-      inputsRef.current[index + 1].focus();
+      if (e.target.value && index < code.length - 1) {
+        inputsRef.current[index + 1].focus();
+      }
     }
   };
 
@@ -31,6 +36,7 @@ const Verification = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Add logic to handle verification code submission
+    navigate('/home');
   };
 
   return (
