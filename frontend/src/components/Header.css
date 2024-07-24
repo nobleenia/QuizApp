@@ -1,0 +1,46 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: #07610a;
+}
+
+.header-logo {
+  display: flex;
+  align-items: center;
+  /* flex-grow: 1; */
+}
+
+.header-logo {
+  width: 50px;
+  height: auto;
+  margin-right: 1rem;
+}
+
+.header-title {
+  width: 0%;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white;
+  margin: 0 auto;
+}
+
+.header-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.header-button {
+  background-color: transparent;
+  border: 2px solid white;
+  color: white;
+  padding: 0.5rem 0.6rem;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 10px;
+}
+
+.header-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}

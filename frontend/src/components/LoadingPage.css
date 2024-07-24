@@ -1,0 +1,21 @@
+.loading-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #b3cab4; /* Adjust the background color as needed */
+  }
+  
+  .loading-logo {
+    width: 150px; /* Adjust the size as needed */
+    animation: spin 2s linear infinite;
+  }
+  
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }  
