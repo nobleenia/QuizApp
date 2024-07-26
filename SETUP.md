@@ -23,7 +23,7 @@
   |-- node_modules
   |-- package-lock.json
   |-- package.json
-
+```
 ## Initial Setup
 
 1. **Clone the Repository**:
