@@ -1,5 +1,3 @@
-// src/components/Footer.js
-
 import React from 'react';
 import './Footer.css';
 import facebook from '../assets/facebook.png';

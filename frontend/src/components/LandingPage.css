@@ -1,169 +1,155 @@
 .landing-page {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-  }
-  
-  .main-content {
-    flex: 1;
-    padding: 2rem;
-    text-align: center;
-  }
-  
-  .main-content h1 {
-    margin-bottom: 1rem;
-  }
-  
-  .main-content h2 {
-    margin-bottom: 1.5rem;
-  }
-  
-  .main-content p {
-    max-width: 800px;
-    margin: 0 auto 2rem;
-  }
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
 
-  .section-heading {
-    margin-top: 3rem;
-    font-size: 1.5rem;
-    text-align: center;
-  }
-  
-  .section-background {
-    background-color: #b3cab4;
-    padding: 2rem;
-    margin-bottom: 3rem;
-    border-radius: 8px;
-  }
-  
-  .quiz-options {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2rem;
-  }
-  
-  .quiz-options h2 {
-    margin-bottom: 1rem;
-  }
-  
-  .quiz-option {
-    background-color: rgba(255, 255, 255, 0.8);
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    padding: 1rem;
-    margin: 0.5rem;
-    width: 80%;
-    max-width: 300px;
-    text-align: left;
-  }
-  
-  .quiz-option h4 {
-    margin-bottom: 0.5rem;
-  }
-  
-  .quiz-option p {
-    margin: 0;
-  }
+.main-content {
+  flex: 1;
+  padding: 2rem;
+  text-align: center;
+}
 
-  .choices {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2rem;
-  }
-  
-  .choices h2 {
-    margin-bottom: 1rem;
-  }
-  
-  .choose-us {
-    background-color: rgba(255, 255, 255, 0.8);
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    padding: 1rem;
-    margin: 0.5rem;
-    width: 80%;
-    max-width: 300px;
-    text-align: left;
-  }
-  
-  .choose-us h4 {
-    margin-bottom: 0.5rem;
-  }
-  
-  .choose-us p {
-    margin: 0;
-  }
-  
-  .download-buttons img {
-    margin: 1rem;
-    width: 150px;
-  }
-  
-  @media (max-width: 768px) {
-    .quiz-options {
-      flex-direction: column;
-      align-items: center;
-    }
-  
-    .quiz-option {
-      width: 90%;
-      margin-bottom: 1rem;
-    }
-  }
-  
-  @media (min-width: 768px) {
-    .quiz-options {
-      flex-direction: row;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-  
-    .quiz-option:nth-child(odd) {
-      margin-top: 2rem;
-    }
-  
-    .quiz-option:nth-child(even) {
-      margin-bottom: 2rem;
-    }
-  }
+.section-heading {
+  margin-top: 3rem;
+  font-size: 1.5rem;
+  text-align: center;
+}
 
-  @media (max-width: 768px) {
-    .choices {
-      flex-direction: column;
-      align-items: center;
-    }
-  
-    .choose-us {
-      width: 90%;
-      margin-bottom: 1rem;
-    }
-  }
+.section-background {
+  background-color: #b3cab4;
+  padding: 2rem;
+  margin-bottom: 3rem;
+  border-radius: 8px;
+}
 
-  @media (min-width: 768px) {
-    .choices {
-      flex-direction: row;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-  
-    .choose-us:nth-child(odd) {
-      margin-top: 2rem;
-    }
-  
-    .choose-us:nth-child(even) {
-      margin-bottom: 2rem;
-    }
-  }
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  gap: 1rem; /* Reduced gap between cards */
+  margin: 0 auto;
+  max-width: 1050px; /* Limit the container width */
+}
 
-  .link {
-    color: #4caf50;
-    cursor: pointer;
-    text-decoration: underline;
-  }
-  
-  .link:hover {
-    text-decoration: none;
-  }
-  
+.flip-card {
+  background-color: transparent;
+  width: 300px;
+  height: 200px;
+  perspective: 1000px;
+  margin-bottom: 2rem;
+}
+
+.flip-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transition: transform 0.8s;
+  transform-style: preserve-3d;
+}
+
+.flip-card:hover .flip-card-inner {
+  transform: rotateY(180deg);
+}
+
+.flip-card-front, .flip-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.flip-card-front {
+  /* position: relative; */
+  background-color: #fff;
+  overflow: hidden;
+}
+
+.flip-card-front::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  filter: blur(25px); /* Blur effect */
+  z-index: 0; /* Ensure the blur effect is behind the content */
+}
+
+.flip-card-front h4 {
+  position: relative;
+  z-index: 1; /* Ensure the text is above the blur effect */
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.flip-card-back {
+  background-color: #f1f1f1;
+  transform: rotateY(180deg);
+}
+
+.flip-card h4 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.flip-card p {
+  margin: 0;
+}
+
+.link {
+  color: #4caf50;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.link:hover {
+  text-decoration: none;
+}
+
+.download-buttons img {
+  margin: 1rem;
+  width: 150px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.download-buttons img:hover {
+  transform: scale(1.1);
+}
+
+/* Additional styling for card offsets */
+.flip-card:nth-child(3n+1) {
+  margin-top: 0.5rem; /* Slightly higher */
+}
+
+.flip-card:nth-child(3n+2) {
+  margin-top: 1.5rem; /* Slightly lower */
+}
+
+.flip-card:nth-child(3n+3) {
+  margin-top: 1rem; /* In-between */
+}
+
+/* Optional: Adjust the blur intensity */
+.blur-light::before {
+  filter: blur(3px);
+}
+
+.blur-medium::before {
+  filter: blur(5px);
+}
+
+.blur-strong::before {
+  filter: blur(7px);
+}
