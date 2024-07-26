@@ -7,6 +7,8 @@ import Login from './components/Login';
 import Verification from './components/Verification';
 import HomeScreen from './components/HomeScreen';
 import ProfileScreen from './components/ProfileScreen';
+import QuizSelectionScreen from './components/QuizSelectionScreen';
+import QuizScreen from './components/QuizScreen';
 import './App.css';
 
 const App = () => {
@@ -31,6 +33,8 @@ const App = () => {
             <Route path="/verification" element={<Verification />} />
             <Route path="/home" element={<HomeScreen />} />
             <Route path="/profile" element={<ProfileScreen />} />
+            <Route path="/quiz/:category" element={<QuizSelectionScreen />} />
+            <Route path="/quiz/:category/:quizId" element={<QuizScreen />} />
           </Routes>
         )}
       </div>

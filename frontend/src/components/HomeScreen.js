@@ -34,12 +34,13 @@ const HomeScreen = () => {
   const [showMoreTrending, setShowMoreTrending] = useState(false);
   const [trending, setTrending] = useState([]);
   const [invitePopupVisible, setInvitePopupVisible] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false); // State for logout confirmation modal
   const navigate = useNavigate();
 
   const categories = [
     { Icon: BookIcon, name: 'Education' },
     { Icon: SportsIcon, name: 'Sports' },
-    { Icon: MediaIcon, name: 'Media' },
+    { Icon: MediaIcon, name: 'Entertainment' },
     { Icon: ReligionIcon, name: 'Religion' },
     { Icon: TechnologyIcon, name: 'Technology' },
     { Icon: CuisineIcon, name: 'Cuisine' },
@@ -68,6 +69,19 @@ const HomeScreen = () => {
     setTrending(shuffled.slice(0, 10));
   }, []);
 
+  const handleLogoutClick = () => {
+    setShowLogoutConfirm(true);
+  };
+
+  const handleConfirmLogout = () => {
+    setShowLogoutConfirm(false);
+    navigate('/'); // Navigate to the LandingPage
+  };
+
+  const handleCancelLogout = () => {
+    setShowLogoutConfirm(false);
+  };
+
   return (
     <div className="home-screen">
       <header className="home-header">
@@ -78,7 +92,7 @@ const HomeScreen = () => {
           onClick={() => navigate('/profile')}
         />
         <h1 className="home-title">QuizApp</h1>
-        <button className="layout-button" onClick={() => navigate('/')}>
+        <button className="layout-button" onClick={handleLogoutClick}>
           Log Out
         </button>
       </header>
@@ -97,7 +111,7 @@ const HomeScreen = () => {
             {categories
               .slice(0, showMoreCategories ? categories.length : 12)
               .map((category, index) => (
-                <div className="category" key={index}>
+                <div className="category" key={index} onClick={() => navigate(`/quiz/${category.name.toLowerCase()}`)}>
                   <category.Icon className="category-icon" />
                   <p>{category.name}</p>
                 </div>
@@ -118,7 +132,7 @@ const HomeScreen = () => {
             {trending
               .slice(0, showMoreTrending ? trending.length : 6)
               .map((category, index) => (
-                <div className="category" key={index}>
+                <div className="category" key={index} onClick={() => navigate(`/quiz/${category.name.toLowerCase()}`)}>
                   <category.Icon className="category-icon" />
                   <p>{category.name}</p>
                 </div>
@@ -149,6 +163,17 @@ const HomeScreen = () => {
               <a href="#">https://quizapp.com/invite/uniqueCode</a>
             </p>
             <button onClick={() => setInvitePopupVisible(false)}>Close</button>
+          </div>
+        </div>
+      )}
+      {showLogoutConfirm && (
+        <div className="logout-confirm-modal">
+          <div className="logout-confirm-content">
+            <p>Are you sure you want to Log Out?</p>
+            <div className="logout-confirm-buttons">
+              <button onClick={handleConfirmLogout}>Yes</button>
+              <button onClick={handleCancelLogout}>No</button>
+            </div>
           </div>
         </div>
       )}
