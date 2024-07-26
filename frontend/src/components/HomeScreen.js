@@ -3,6 +3,7 @@ import './HomeScreen.css';
 import userImage from '../assets/userImage.jpg';
 import Footer from './Footer';
 import { useNavigate } from 'react-router-dom';
+import { FiBell } from 'react-icons/fi';
 
 import { ReactComponent as BookIcon } from '../assets/categories/book.svg';
 import { ReactComponent as SportsIcon } from '../assets/categories/sports.svg';
@@ -92,6 +93,7 @@ const HomeScreen = () => {
           onClick={() => navigate('/profile')}
         />
         <h1 className="home-title">QuizApp</h1>
+        <FiBell className="notification-icon" onClick={() => navigate('/notifications')} />
         <button className="layout-button" onClick={handleLogoutClick}>
           Log Out
         </button>

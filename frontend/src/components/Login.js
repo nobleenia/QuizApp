@@ -7,6 +7,7 @@ const Login = () => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
+    role: 'user', // Default role is user
   });
 
   const navigate = useNavigate();
@@ -21,7 +22,12 @@ const Login = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Add logic to handle login form submission
-    navigate('/verification');
+    // For now, we're just navigating based on the role
+    if (formData.role === 'admin') {
+      navigate('/admin-dashboard');
+    } else {
+      navigate('/user-dashboard');
+    }
   };
 
   return (
@@ -40,6 +46,7 @@ const Login = () => {
               value={formData.email}
               onChange={handleChange}
               placeholder="Enter E-mail"
+              required
             />
           </div>
           <div className="auth-input">
@@ -49,7 +56,30 @@ const Login = () => {
               value={formData.password}
               onChange={handleChange}
               placeholder="Enter Password"
+              required
             />
+          </div>
+          <div className="auth-input">
+            <label>
+              <input
+                type="radio"
+                name="role"
+                value="user"
+                checked={formData.role === 'user'}
+                onChange={handleChange}
+              />
+              User
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="role"s
+                value="admin"
+                checked={formData.role === 'admin'}
+                onChange={handleChange}
+              />
+              Administrator
+            </label>
           </div>
           <button type="submit" className="auth-button">
             Log In

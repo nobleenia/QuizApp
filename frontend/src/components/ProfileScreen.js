@@ -3,7 +3,7 @@ import './ProfileScreen.css';
 import userImage from '../assets/userImage.jpg'; // Placeholder for user's image
 import badgeIcon from '../assets/badgeIcon.png'; // Placeholder for badge icon
 import Footer from './Footer';
-import { FiSettings, FiEdit, FiX } from 'react-icons/fi'; // Using react-icons for settings, edit, and close icons
+import { FiSettings, FiEdit, FiBell, FiX } from 'react-icons/fi'; // Using react-icons for settings, edit, and close icons
 import { useNavigate } from 'react-router-dom';
 
 const ProfileScreen = () => {
@@ -58,6 +58,7 @@ const ProfileScreen = () => {
       <header className="profile-header">
         <button className="back-button" onClick={() => window.history.back()}>Back</button>
         <h1 className="profile-title">QuizApp</h1>
+        <FiBell className="notification-icon" onClick={() => navigate('/notifications')} />
         <button className="contact-button" onClick={() => window.open('https://forms.gle/contactFormURL', '_blank')}>Contact Us</button>
       </header>
       <main className="profile-main">
