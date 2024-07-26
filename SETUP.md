@@ -14,7 +14,7 @@
 4. **Git**: Ensure Git is installed for version control.
 
 ## Project Structure
-
+```plaintext
 /QuizApp
   |-- backend
   |-- docker-compose.yml
