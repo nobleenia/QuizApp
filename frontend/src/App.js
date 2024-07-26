@@ -9,6 +9,7 @@ import HomeScreen from './components/HomeScreen';
 import ProfileScreen from './components/ProfileScreen';
 import QuizSelectionScreen from './components/QuizSelectionScreen';
 import QuizScreen from './components/QuizScreen';
+import NotificationScreen from './components/NotificationScreen';
 import './App.css';
 
 const App = () => {
@@ -35,6 +36,7 @@ const App = () => {
             <Route path="/profile" element={<ProfileScreen />} />
             <Route path="/quiz/:category" element={<QuizSelectionScreen />} />
             <Route path="/quiz/:category/:quizId" element={<QuizScreen />} />
+            <Route path="/notifications" element={<NotificationScreen />} />
           </Routes>
         )}
       </div>
