@@ -83,6 +83,11 @@ const HomeScreen = () => {
     setShowLogoutConfirm(false);
   };
 
+  const completedQuizzes = [
+    { id: 1, title: 'General Knowledge Quiz', score: 85, total: 100 },
+    // More completed quizzes can be added here, fetch from database
+  ];
+
   return (
     <div className="home-screen">
       <header className="home-header">
@@ -148,6 +153,16 @@ const HomeScreen = () => {
               {showMoreTrending ? 'Show Less' : 'Show More'}
             </button>
           )}
+        </div>
+        <div className="completed-quizzes-section">
+          <h3>My Quizzes</h3>
+          {completedQuizzes.map((quiz) => (
+            <div key={quiz.id} className="completed-quiz-item">
+              <p>{quiz.title}</p>
+              <p>Score: {quiz.score}/{quiz.total}</p>
+              <button onClick={() => navigate(`/results/${quiz.id}`)}>View Results</button>
+            </div>
+          ))}
         </div>
       </main>
       <div className="invite-section">
