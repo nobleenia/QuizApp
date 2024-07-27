@@ -19,6 +19,10 @@
     cursor: pointer;
     margin-right: 1rem;
   }
+
+  .back-button:hover {
+    transform: scale(1.100);
+  }
   
   .notification-header h1 {
     margin: 0;
