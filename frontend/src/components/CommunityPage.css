@@ -1,0 +1,123 @@
+.community-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  .community-header {
+    display: flex;
+    align-items: center;
+    background-color: #07610a;
+    padding: 1rem;
+    justify-content: space-between;
+}
+
+.profile-title {
+    flex-grow: 1;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: white;
+}
+  
+  .main-content {
+    flex: 1;
+    padding: 2rem;
+    background: linear-gradient(to bottom, #b3cab4, #f1f1f1);
+  }
+  
+  h1, h2 {
+    text-align: center;
+    color: #07610a;
+  }
+  
+  .new-post, .forum-posts {
+    margin: 2rem auto;
+    max-width: 800px;
+  }
+  
+  .new-post input, .new-post textarea {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    box-sizing: border-box;
+  }
+  
+  .new-post button {
+    display: block;
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #07610a;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+  }
+  
+  .forum-post {
+    background-color: white;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1rem;
+  }
+  
+  .forum-post h3 {
+    margin-top: 0;
+    color: #4a4a4a;
+  }
+  
+  .comments .comment {
+    padding: 0.5rem;
+    margin: 0.5rem 0;
+    border-top: 1px solid #ddd;
+  }
+  
+  .comments .new-comment {
+    display: flex;
+    align-items: center;
+  }
+  
+  .comments .new-comment input {
+    flex: 1;
+    padding: 0.5rem;
+    margin-right: 0.5rem;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+  }
+  
+  .comments .new-comment button {
+    background-color: #07610a;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+  }
+  
+  .comments button {
+    margin-top: 0.5rem;
+    background-color: transparent;
+    border: none;
+    color: #07610a;
+    cursor: pointer;
+  }
+  
+  .comments button:hover {
+    text-decoration: underline;
+  }
+  
+  .back-button {
+    font-size: 1.5rem;
+    cursor: pointer;
+    margin-right: 1rem;
+    color: white;
+    cursor: pointer;
+}
+
+.back-button:hover {
+    transform: scale(1.100);
+}

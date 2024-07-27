@@ -8,17 +8,18 @@
 }
 
 .profile-title {
-    text-align: center;
-    color: white;
     flex-grow: 1;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: white;
 }
 
-.back-button, .contact-button {
-    background: none;
-    border: none;
-    color: white;
+.back-button {
+    font-size: 1.5rem;
     cursor: pointer;
-    font-size: 1.2rem;
+    margin-right: 1rem;
+    color: white;
 }
 
 .profile-main {
