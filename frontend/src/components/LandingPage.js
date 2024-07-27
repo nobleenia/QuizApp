@@ -83,11 +83,11 @@ const LandingPage = () => {
           Join QuizApp today and take your quiz experience to the next level! Whether you're looking to test knowledge, prepare for exams, or just have fun, QuizApp is here to make quizzing easy and enjoyable.
         </p>
         <p>
-          Ready to get started?{' '}
+          Ready to test your knowledge and join a vibrant community of quiz lovers?{' '}
           <span className="link" onClick={() => navigate('/signup')}>
             Sign Up
           </span>{' '}
-          now and create your first quiz!
+          today and start creating, taking, and managing quizzes with QuizApp!
         </p>
         <div className="download-buttons">
           <a href={googlePlayUrl} target="_blank" rel="noopener noreferrer">
