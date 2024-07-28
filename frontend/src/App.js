@@ -12,6 +12,7 @@ import QuizScreen from './components/QuizScreen';
 import NotificationScreen from './components/NotificationScreen';
 import CommunityPage from './components/CommunityPage';
 import FloatingIcon from './components/FloatingIcon'; // Assuming this is your floating icon component
+import QuizResultsPage from './components/QuizResultsPage';
 import './App.css';
 
 const App = () => {
@@ -41,6 +42,7 @@ const App = () => {
               <Route path="/quiz/:category/:quizId" element={<QuizScreen />} />
               <Route path="/notifications" element={<NotificationScreen />} />
               <Route path="/community" element={<CommunityPage />} />
+              <Route path="/results/:quizId" element={<QuizResultsPage />} />
             </Routes>
             <FloatingIconWrapper />
           </>

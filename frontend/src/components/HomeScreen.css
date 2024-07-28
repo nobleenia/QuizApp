@@ -63,7 +63,7 @@
   border-radius: 4px;
 }
 
-.categories-section, .trending-section, .achievements-section {
+.categories-section, .trending-section, .completed-quizzes-section {
   border: 1px solid #ddd;
   border-radius: 8px;
   padding: 1.5rem;
@@ -105,6 +105,13 @@
   font-size: 1rem;
   cursor: pointer;
   border-radius: 10px;
+}
+
+.completed-quiz-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
 }
 
 .invite-section {
@@ -208,4 +215,59 @@
 
 .notification-icon:hover {
   transform: scale(1.2);
+}
+
+.completed-quiz-item {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background-color: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.completed-quiz-item h4,
+.completed-quiz-item p {
+  margin: 0;
+}
+
+.completed-quizzes {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+.completed-quiz-item {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1rem;
+  background-color: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.completed-quiz-item p {
+  margin: 0.5rem 0;
+}
+
+.completed-quiz-item button {
+  background-color: #07610a;
+  color: white;
+  border: none;
+  padding: 0.5rem;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-top: 1rem;
+}
+
+.completed-quiz-item button:hover {
+  background-color: #06560a;
+}
+
+.view-results {
+  cursor: pointer;
+  border-radius: 10px;
 }
