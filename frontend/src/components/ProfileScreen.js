@@ -53,6 +53,10 @@ const ProfileScreen = () => {
     setShowLogoutConfirm(false);
   };
 
+  const handleAnalysisLink = () => {
+    navigate('/quiz-analysis');
+  };
+
   return (
     <div className="profile-screen">
       <header className="profile-header">
@@ -135,11 +139,15 @@ const ProfileScreen = () => {
             </div>
             <p>Change Password</p>
             <p>Change Username</p>
-            <div className="settings-item">
+            <div className="settings-item" onClick={handleAnalysisLink} style={{ cursor: 'pointer' }}>
               <p>Notifications</p>
               <div className="toggle-switch" onClick={toggleNotifications}>
                 <div className={`toggle-slider ${notificationsEnabled ? 'on' : 'off'}`}></div>
               </div>
+            </div>
+            <div className='settings-item'>
+              <p>View Analysis & Insights</p>
+
             </div>
             <p className="settings-logout" onClick={handleLogoutClick}>Logout</p>
             <div className="settings-save-button-container">
