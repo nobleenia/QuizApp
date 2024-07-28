@@ -34,6 +34,7 @@ const HomeScreen = () => {
   const [showMoreCategories, setShowMoreCategories] = useState(false);
   const [showMoreTrending, setShowMoreTrending] = useState(false);
   const [trending, setTrending] = useState([]);
+  const [showMoreQuizzes, setShowMoreQuizzes] = useState(false);
   const [invitePopupVisible, setInvitePopupVisible] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false); // State for logout confirmation modal
   const navigate = useNavigate();
@@ -84,7 +85,15 @@ const HomeScreen = () => {
   };
 
   const completedQuizzes = [
-    { id: 1, title: 'General Knowledge Quiz', score: 85, total: 100 },
+    { id: 1, title: 'Public Holidays', category: 'General Knowledge', subcategory: 'DIY', score: 85, total: 100 },
+    { id: 2, title: 'General Knowledge Quiz', category: 'General Knowledge', subcategory: 'DIY', score: 65, total: 100 },
+    { id: 3, title: 'Saludos en español', category: 'Languages', subcategory: 'Español', score: 35, total: 100 },
+    { id: 4, title: 'Salutations en français', category: 'Languages', subcategory: 'Français', score: 85, total: 100 },
+    { id: 5, title: 'The Passions of Christ', category: 'Religion', subcategory: 'Christainity', score: 100, total: 100 },
+    { id: 6, title: 'Beauty and the Beast', category: 'Entertainment', subcategory: 'Movies', score: 100, total: 100 },
+    { id: 7, title: 'Mostt Popular Paintings of 2021', category: 'Arts', subcategory: 'Paintings', score: 85, total: 100 },
+    { id: 8, title: 'The Cold Wars', category: 'History', subcategory: 'Wars', score: 55, total: 100 },
+    { id: 8, title: 'Michael Jackson', category: 'Pop Culture', subcategory: 'Pop Music', score: 55, total: 100 },
     // More completed quizzes can be added here, fetch from database
   ];
 
@@ -156,13 +165,28 @@ const HomeScreen = () => {
         </div>
         <div className="completed-quizzes-section">
           <h3>My Quizzes</h3>
-          {completedQuizzes.map((quiz) => (
-            <div key={quiz.id} className="completed-quiz-item">
-              <p>{quiz.title}</p>
-              <p>Score: {quiz.score}/{quiz.total}</p>
-              <button onClick={() => navigate(`/results/${quiz.id}`)}>View Results</button>
-            </div>
-          ))}
+          <div className='categories completed-quizzes'>
+            {completedQuizzes
+              .slice(0, showMoreQuizzes ? completedQuizzes.length : 4)
+              .map((quiz) => (
+                <div key={quiz.id} className="completed-quiz-item">
+                  <p>{quiz.title}</p>
+                  <p>{quiz.category}</p>
+                  <p>{quiz.subcategory}</p>
+                  <p>Score: {quiz.score}/{quiz.total}</p>
+                  <button 
+                    onClick={() => navigate(`/results/${quiz.id}`)}
+                    className='view-results'>View Results</button>
+                </div>
+              ))}
+          </div>
+          {completedQuizzes.length > 4 && (
+            <button
+              onClick={() => setShowMoreQuizzes(!showMoreQuizzes)}
+              className='show-more'>
+              {showMoreQuizzes ? 'Show Less' : 'Show More'}
+            </button>
+          )}
         </div>
       </main>
       <div className="invite-section">
