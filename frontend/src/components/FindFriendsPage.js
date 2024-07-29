@@ -16,17 +16,72 @@ const FindFriendsPage = () => {
   useEffect(() => {
     // Fetch users from your API or database
     const fetchedUsers = [
-      { id: 1, username: 'User1', profilePic: 'path_to_image', status: 'online' },
-      { id: 2, username: 'User2', profilePic: 'path_to_image', status: 'offline' },
-      { id: 3, username: 'User2', profilePic: 'path_to_image', status: 'offline' },
-      { id: 4, username: 'User2', profilePic: 'path_to_image', status: 'offline' },
-      { id: 5, username: 'User2', profilePic: 'path_to_image', status: 'offline' },
-      { id: 6, username: 'User2', profilePic: 'path_to_image', status: 'offline' },
-      { id: 7, username: 'User2', profilePic: 'path_to_image', status: 'offline' },
-      { id: 8, username: 'User2', profilePic: 'path_to_image', status: 'offline' },
-      { id: 9, username: 'User2', profilePic: 'path_to_image', status: 'offline' },
-      { id: 10, username: 'User2', profilePic: 'path_to_image', status: 'offline' },
-      { id: 11, username: 'User2', profilePic: 'path_to_image', status: 'offline' },
+      {
+        id: 1,
+        username: 'User1',
+        profilePic: 'path_to_image',
+        status: 'online',
+      },
+      {
+        id: 2,
+        username: 'User2',
+        profilePic: 'path_to_image',
+        status: 'offline',
+      },
+      {
+        id: 3,
+        username: 'User2',
+        profilePic: 'path_to_image',
+        status: 'offline',
+      },
+      {
+        id: 4,
+        username: 'User2',
+        profilePic: 'path_to_image',
+        status: 'offline',
+      },
+      {
+        id: 5,
+        username: 'User2',
+        profilePic: 'path_to_image',
+        status: 'offline',
+      },
+      {
+        id: 6,
+        username: 'User2',
+        profilePic: 'path_to_image',
+        status: 'offline',
+      },
+      {
+        id: 7,
+        username: 'User2',
+        profilePic: 'path_to_image',
+        status: 'offline',
+      },
+      {
+        id: 8,
+        username: 'User2',
+        profilePic: 'path_to_image',
+        status: 'offline',
+      },
+      {
+        id: 9,
+        username: 'User2',
+        profilePic: 'path_to_image',
+        status: 'offline',
+      },
+      {
+        id: 10,
+        username: 'User2',
+        profilePic: 'path_to_image',
+        status: 'offline',
+      },
+      {
+        id: 11,
+        username: 'User2',
+        profilePic: 'path_to_image',
+        status: 'offline',
+      },
       // Add more users here
     ];
     setUsers(fetchedUsers);
@@ -53,7 +108,9 @@ const FindFriendsPage = () => {
   const handleSearchChange = (event) => {
     const searchValue = event.target.value.toLowerCase();
     setSearchTerm(searchValue);
-    setFilteredUsers(users.filter(user => user.username.toLowerCase().includes(searchValue)));
+    setFilteredUsers(
+      users.filter((user) => user.username.toLowerCase().includes(searchValue)),
+    );
   };
 
   const handleAddFriendClick = (user) => {
@@ -75,15 +132,24 @@ const FindFriendsPage = () => {
     <div className="find-friends-page">
       <header className="find-friends-header">
         <FiArrowLeft className="back-button" onClick={() => navigate(-1)} />
-        <h1 className='page-title'>Find Friends</h1>
-        <FiBell className="notification-icon" onClick={() => navigate('/notifications')} />
-        <button className="layout-button" onClick={handleLogoutClick}>Log Out</button>
+        <h1 className="page-title">Find Friends</h1>
+        <FiBell
+          className="notification-icon"
+          onClick={() => navigate('/notifications')}
+        />
+        <button className="layout-button" onClick={handleLogoutClick}>
+          Log Out
+        </button>
       </header>
       <main className="find-friends-main">
         <div className="controls">
           <div className="dropdown-container">
             <label htmlFor="itemsPerPage">Show:</label>
-            <select id="itemsPerPage" value={itemsPerPage} onChange={handleItemsPerPageChange}>
+            <select
+              id="itemsPerPage"
+              value={itemsPerPage}
+              onChange={handleItemsPerPageChange}
+            >
               <option value={10}>10</option>
               <option value={20}>20</option>
               <option value={30}>30</option>
@@ -102,12 +168,19 @@ const FindFriendsPage = () => {
         <div className="users-list">
           {filteredUsers.slice(0, itemsPerPage).map((user) => (
             <div key={user.id} className="user-card">
-              <img src={user.profilePic} alt={user.username} className="profile-pic" />
+              <img
+                src={user.profilePic}
+                alt={user.username}
+                className="profile-pic"
+              />
               <div className="user-info">
                 <p className="username">{user.username}</p>
                 <p className={`status ${user.status}`}>{user.status}</p>
               </div>
-              <FiPlusCircle className="add-friend-button" onClick={() => handleAddFriendClick(user)} />
+              <FiPlusCircle
+                className="add-friend-button"
+                onClick={() => handleAddFriendClick(user)}
+              />
             </div>
           ))}
         </div>

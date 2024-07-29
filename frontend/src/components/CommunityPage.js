@@ -10,9 +10,14 @@ const CommunityPage = () => {
       id: 1,
       author: 'John Doe',
       title: 'Tips for Preparing Quiz Questions',
-      content: 'What are some best practices for creating engaging quiz questions?',
+      content:
+        'What are some best practices for creating engaging quiz questions?',
       comments: [
-        { id: 1, author: 'Jane Smith', content: 'Focus on clarity and relevance to your audience.' },
+        {
+          id: 1,
+          author: 'Jane Smith',
+          content: 'Focus on clarity and relevance to your audience.',
+        },
       ],
     },
     // More posts can be added here
@@ -27,18 +32,33 @@ const CommunityPage = () => {
   const handlePostSubmit = () => {
     if (newPost.title && newPost.content) {
       const newPostId = posts.length + 1;
-      setPosts([...posts, { ...newPost, id: newPostId, author: 'Current User', comments: [] }]);
+      setPosts([
+        ...posts,
+        { ...newPost, id: newPostId, author: 'Current User', comments: [] },
+      ]);
       setNewPost({ title: '', content: '' });
     }
   };
 
   const handleCommentSubmit = (postId) => {
     if (newComment) {
-      setPosts(posts.map(post => 
-        post.id === postId 
-          ? { ...post, comments: [...post.comments, { id: post.comments.length + 1, author: 'Current User', content: newComment }] } 
-          : post
-      ));
+      setPosts(
+        posts.map((post) =>
+          post.id === postId
+            ? {
+                ...post,
+                comments: [
+                  ...post.comments,
+                  {
+                    id: post.comments.length + 1,
+                    author: 'Current User',
+                    content: newComment,
+                  },
+                ],
+              }
+            : post,
+        ),
+      );
       setNewComment('');
       setSelectedPostId(null);
     }
@@ -62,7 +82,10 @@ const CommunityPage = () => {
       <header className="community-header">
         <FiArrowLeft className="back-button" onClick={() => navigate(-1)} />
         <h1 className="profile-title">QuizApp</h1>
-        <FiBell className="notification-icon" onClick={() => navigate('/notifications')} />
+        <FiBell
+          className="notification-icon"
+          onClick={() => navigate('/notifications')}
+        />
         <button className="layout-button" onClick={handleLogoutClick}>
           Log Out
         </button>
@@ -80,7 +103,9 @@ const CommunityPage = () => {
           <textarea
             placeholder="Post Content"
             value={newPost.content}
-            onChange={(e) => setNewPost({ ...newPost, content: e.target.value })}
+            onChange={(e) =>
+              setNewPost({ ...newPost, content: e.target.value })
+            }
           />
           <button onClick={handlePostSubmit}>Post</button>
         </section>
@@ -90,12 +115,16 @@ const CommunityPage = () => {
             <div key={post.id} className="forum-post">
               <h3>{post.title}</h3>
               <p>{post.content}</p>
-              <p><small>by {post.author}</small></p>
+              <p>
+                <small>by {post.author}</small>
+              </p>
               <div className="comments">
                 {post.comments.map((comment) => (
                   <div key={comment.id} className="comment">
                     <p>{comment.content}</p>
-                    <p><small>by {comment.author}</small></p>
+                    <p>
+                      <small>by {comment.author}</small>
+                    </p>
                   </div>
                 ))}
                 {selectedPostId === post.id ? (
@@ -106,10 +135,14 @@ const CommunityPage = () => {
                       value={newComment}
                       onChange={(e) => setNewComment(e.target.value)}
                     />
-                    <button onClick={() => handleCommentSubmit(post.id)}>Comment</button>
+                    <button onClick={() => handleCommentSubmit(post.id)}>
+                      Comment
+                    </button>
                   </div>
                 ) : (
-                  <button onClick={() => setSelectedPostId(post.id)}>Add a Comment</button>
+                  <button onClick={() => setSelectedPostId(post.id)}>
+                    Add a Comment
+                  </button>
                 )}
               </div>
             </div>

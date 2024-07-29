@@ -3,7 +3,20 @@ import { useNavigate } from 'react-router-dom';
 import { FiArrowLeft, FiBell } from 'react-icons/fi';
 import './QuizAnalysisPage.css';
 import Footer from './Footer';
-import { PieChart, Pie, Cell, BarChart, Bar, LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import {
+  PieChart,
+  Pie,
+  Cell,
+  BarChart,
+  Bar,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from 'recharts';
 
 const dataMock = {
   categoryDistribution: [
@@ -61,8 +74,11 @@ const QuizAnalysisPage = () => {
     <div className="quiz-analysis-page">
       <header className="analysis-header">
         <FiArrowLeft className="back-button" onClick={() => navigate(-1)} />
-        <h1 className='page-title'>Quiz Analysis & Insights</h1>
-        <FiBell className="notification-icon" onClick={() => navigate('/notifications')} />
+        <h1 className="page-title">Quiz Analysis & Insights</h1>
+        <FiBell
+          className="notification-icon"
+          onClick={() => navigate('/notifications')}
+        />
         <button className="layout-button" onClick={handleLogoutClick}>
           Log Out
         </button>
@@ -82,7 +98,10 @@ const QuizAnalysisPage = () => {
                 label
               >
                 {categoryDistribution.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
                 ))}
               </Pie>
               <Tooltip />

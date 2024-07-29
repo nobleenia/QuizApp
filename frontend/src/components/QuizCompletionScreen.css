@@ -1,4 +1,4 @@
-.quiz-screen {
+.quiz-completion-screen {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -6,14 +6,15 @@
     background: linear-gradient(to bottom, #b3cab4, #f1f1f1);
   }
   
-  .quiz-header {
+  .quiz-completion-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    width: 100%;
     background-color: #07610a;
     padding: 1rem;
+    width: 100%;
     box-sizing: border-box;
+    margin: 0 auto;
   }
   
   .quiz-title {
@@ -38,47 +39,46 @@
     padding: 0.5rem 1rem;
     border-radius: 10px;
     cursor: pointer;
-  }
+}
 
-  .layout-button:hover {
+.layout-button:hover {
     background-color: rgba(255, 255, 255, 0.1);
-  }
+}
   
-  .quiz-main {
+  .completion-main {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 100%;
     max-width: 800px;
     margin: 2rem auto;
     text-align: center;
   }
   
-  .quiz-question {
-    margin-bottom: 2rem;
-  }
-  
-  .quiz-options {
+  .completion-content {
     display: flex;
     flex-direction: column;
     align-items: center;
   }
   
-  .option-button {
-    width: 100%;
-    max-width: 400px;
-    padding: 1rem;
-    margin: 0.5rem 0;
-    border: 2px solid #ddd;
-    border-radius: 10px;
-    background-color: white;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+  .completion-status {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
   }
   
-  .option-button.selected {
-    background-color: #b3cab4;
+  .completion-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
   }
   
-  .submit-button {
-    margin-top: 2rem;
+  .points-earned {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+  }
+  
+  .return-button {
     background-color: #07610a;
     color: white;
     border: none;
@@ -86,20 +86,10 @@
     font-size: 1rem;
     border-radius: 10px;
     cursor: pointer;
+    transition: background-color 0.3s ease;
   }
   
-  .submit-button:hover {
+  .return-button:hover {
     background-color: #06560a;
-  }
-  
-  footer {
-    background-color: #07610a;
-    color: white;
-    padding: 1rem;
-    text-align: center;
-    width: 100%;
-    position: sticky;
-    bottom: 0;
-    left: 0;
   }
   

@@ -60,10 +60,23 @@ const ProfileScreen = () => {
   return (
     <div className="profile-screen">
       <header className="profile-header">
-        <FiArrowLeft className="back-button" onClick={() => window.history.back()}/>
+        <FiArrowLeft
+          className="back-button"
+          onClick={() => window.history.back()}
+        />
         <h1 className="profile-title">QuizApp</h1>
-        <FiBell className="notification-icon" onClick={() => navigate('/notifications')} />
-        <button className="contact-button" onClick={() => window.open('https://forms.gle/contactFormURL', '_blank')}>Contact Us</button>
+        <FiBell
+          className="notification-icon"
+          onClick={() => navigate('/notifications')}
+        />
+        <button
+          className="contact-button"
+          onClick={() =>
+            window.open('https://forms.gle/contactFormURL', '_blank')
+          }
+        >
+          Contact Us
+        </button>
       </header>
       <main className="profile-main">
         <button className="settings-button" onClick={handleSettingsClick}>
@@ -72,7 +85,11 @@ const ProfileScreen = () => {
         <div className="profile-info-container">
           <div className="profile-info">
             <div className="profile-image-wrapper">
-              <img src={profileImage} alt="User" className="profile-image-large" />
+              <img
+                src={profileImage}
+                alt="User"
+                className="profile-image-large"
+              />
               <label htmlFor="file-input" className="edit-icon">
                 <FiEdit />
               </label>
@@ -86,7 +103,9 @@ const ProfileScreen = () => {
             </div>
             <div className="profile-details">
               <h2 className="user-name">Username</h2>
-              <p className="user-points"><i>{points} Points</i></p>
+              <p className="user-points">
+                <i>{points} Points</i>
+              </p>
             </div>
             <div className="badge-section">
               <img src={badgeIcon} alt="Badge" className="badge-icon" />
@@ -113,7 +132,10 @@ const ProfileScreen = () => {
           <h3>Friends</h3>
           <div className="friends-grid">
             {friends.length === 0 ? (
-              <p>No friends yet. <span className="add-friends-link">Add new friends</span></p>
+              <p>
+                No friends yet.{' '}
+                <span className="add-friends-link">Add new friends</span>
+              </p>
             ) : (
               friends.map((friend, index) => (
                 <div className="friend" key={index}>
@@ -122,7 +144,12 @@ const ProfileScreen = () => {
               ))
             )}
           </div>
-          <button className="find-friends-button" onClick={() => navigate('/find-friends')}>Find Friends</button>
+          <button
+            className="find-friends-button"
+            onClick={() => navigate('/find-friends')}
+          >
+            Find Friends
+          </button>
         </div>
         <div className="friend-requests-section">
           <h3>Friend Requests</h3>
@@ -156,13 +183,21 @@ const ProfileScreen = () => {
             <div className="settings-item">
               <p>Notifications</p>
               <div className="toggle-switch" onClick={toggleNotifications}>
-                <div className={`toggle-slider ${notificationsEnabled ? 'on' : 'off'}`}></div>
+                <div
+                  className={`toggle-slider ${notificationsEnabled ? 'on' : 'off'}`}
+                ></div>
               </div>
             </div>
-            <div className='settings-item' onClick={handleAnalysisLink} style={{ cursor: 'pointer' }}>
+            <div
+              className="settings-item"
+              onClick={handleAnalysisLink}
+              style={{ cursor: 'pointer' }}
+            >
               <p>View Analysis & Insights</p>
             </div>
-            <p className="settings-logout" onClick={handleLogoutClick}>Logout</p>
+            <p className="settings-logout" onClick={handleLogoutClick}>
+              Logout
+            </p>
             <div className="settings-save-button-container">
               <button className="settings-save-button">Save</button>
             </div>

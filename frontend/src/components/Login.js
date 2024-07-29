@@ -26,7 +26,7 @@ const Login = () => {
     if (formData.role === 'admin') {
       navigate('/admin-dashboard');
     } else {
-      navigate('/user-dashboard');
+      navigate('/home');
     }
   };
 
@@ -73,7 +73,7 @@ const Login = () => {
             <label>
               <input
                 type="radio"
-                name="role"s
+                name="role"
                 value="admin"
                 checked={formData.role === 'admin'}
                 onChange={handleChange}
