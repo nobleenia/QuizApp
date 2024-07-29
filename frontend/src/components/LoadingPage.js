@@ -1,6 +1,6 @@
 import React from 'react';
 import './LoadingPage.css';
-import logo from '../assets/logo.png'; // Adjust the path as needed
+import logo from '../assets/logo.png';
 
 const LoadingPage = () => {
   return (

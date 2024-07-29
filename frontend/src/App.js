@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  useLocation,
+} from 'react-router-dom';
 import LoadingPage from './components/LoadingPage';
 import LandingPage from './components/LandingPage';
 import SignUp from './components/SignUp';
@@ -15,6 +20,7 @@ import FloatingIcon from './components/FloatingIcon';
 import QuizResultsPage from './components/QuizResultsPage';
 import QuizAnalysisPage from './components/QuizAnalysisPage';
 import FindFriendsPage from './components/FindFriendsPage';
+import QuizCompletionScreen from './components/QuizCompletionScreen';
 import './App.css';
 
 const App = () => {
@@ -47,6 +53,10 @@ const App = () => {
               <Route path="/results/:quizId" element={<QuizResultsPage />} />
               <Route path="/quiz-analysis" element={<QuizAnalysisPage />} />
               <Route path="/find-friends" element={<FindFriendsPage />} />
+              <Route
+                path="/quiz-completion"
+                element={<QuizCompletionScreen />}
+              />
             </Routes>
             <FloatingIconWrapper />
           </>

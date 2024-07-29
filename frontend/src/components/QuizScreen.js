@@ -7,7 +7,12 @@ import Footer from './Footer';
 const QuizScreen = () => {
   const { category, quizId } = useParams();
   const [questions, setQuestions] = useState([
-    { question: "What is the name of the first thing that crosses your mind when you look at the mirror and smile bright?", options: ["Option A", "Option B", "Option C", "Option D"], correctAnswer: 0 },
+    {
+      question:
+        'What is the name of the first thing that crosses your mind when you look at the mirror and smile bright?',
+      options: ['Option A', 'Option B', 'Option C', 'Option D'],
+      correctAnswer: 0,
+    },
     // Add other questions similarly
   ]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -17,7 +22,7 @@ const QuizScreen = () => {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setTimeRemaining(prev => {
+      setTimeRemaining((prev) => {
         if (prev <= 0) {
           clearInterval(timer);
           handleQuizCompletion();
@@ -63,7 +68,7 @@ const QuizScreen = () => {
           onClick={() => navigate('/profile')}
         />
         <h1 className="quiz-title">QuizApp</h1>
-        <button className="logout-button" onClick={() => navigate('/login')}>
+        <button className="layout-button" onClick={() => navigate('/login')}>
           Log Out
         </button>
       </header>

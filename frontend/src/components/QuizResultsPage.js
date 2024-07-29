@@ -50,7 +50,7 @@ const QuizResultsPage = () => {
     <div className="quiz-results-page">
       <header className="results-header">
         <FiArrowLeft className="back-button" onClick={() => navigate(-1)} />
-        <h1 className='page-title'>Quiz Results</h1>
+        <h1 className="page-title">Quiz Results</h1>
         <button className="layout-button" onClick={handleLogoutClick}>
           Log Out
         </button>
@@ -58,7 +58,9 @@ const QuizResultsPage = () => {
       <main className="results-main">
         <section className="score-summary">
           <h2>Your Score</h2>
-          <p>{quizResults.score} / {quizResults.total}</p>
+          <p>
+            {quizResults.score} / {quizResults.total}
+          </p>
           <p>Percentage: {(quizResults.score / quizResults.total) * 100}%</p>
         </section>
         <section className="question-review">
@@ -74,7 +76,9 @@ const QuizResultsPage = () => {
         </section>
         <section className="results-actions">
           <button onClick={() => navigate('/home')}>Back to Home</button>
-          <button onClick={() => navigate(`/quiz/${quizId}`)}>Retake Quiz</button>
+          <button onClick={() => navigate(`/quiz/${quizId}`)}>
+            Retake Quiz
+          </button>
           <button>Share Results</button>
         </section>
       </main>

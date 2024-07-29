@@ -54,12 +54,14 @@ const QuizSelectionScreen = () => {
           onClick={() => navigate('/profile')}
         />
         <h1 className="quiz-selection-title">QuizApp</h1>
-        <button className="logout-button" onClick={() => navigate('/')}>
+        <button className="layout-button" onClick={() => navigate('/')}>
           Log Out
         </button>
       </header>
       <main className="quiz-selection-main">
-        <h2>Category: {category.charAt(0).toUpperCase() + category.slice(1)}</h2>
+        <h2>
+          Category: {category.charAt(0).toUpperCase() + category.slice(1)}
+        </h2>
         <div className="subcategory-selector">
           <label htmlFor="subcategory-select">Select Subcategory:</label>
           <select
@@ -68,7 +70,9 @@ const QuizSelectionScreen = () => {
             onChange={handleSubcategoryChange}
           >
             {subcategories.map((subcat, index) => (
-              <option key={index} value={subcat}>{subcat}</option>
+              <option key={index} value={subcat}>
+                {subcat}
+              </option>
             ))}
           </select>
         </div>
@@ -80,11 +84,17 @@ const QuizSelectionScreen = () => {
               onClick={() => !quiz.locked && handleQuizClick(quiz.name)}
             >
               <p>{quiz.name}</p>
-              {quiz.locked ? <span className="lock-icon">🔒</span> : <span className="unlock-icon">🔓</span>}
+              {quiz.locked ? (
+                <span className="lock-icon">🔒</span>
+              ) : (
+                <span className="unlock-icon">🔓</span>
+              )}
             </div>
           ))}
         </div>
-        <button className="return-button" onClick={() => navigate(-1)}>Return</button>
+        <button className="return-button" onClick={() => navigate(-1)}>
+          Return
+        </button>
       </main>
       <Footer />
     </div>

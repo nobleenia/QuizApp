@@ -7,7 +7,7 @@
     background: linear-gradient(to bottom, #b3cab4, #f1f1f1);
 }
 
-.home-header {
+.quiz-selection-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -17,7 +17,7 @@
     box-sizing: border-box;
 }
 
-.home-title {
+.quiz-selection-title {
     flex-grow: 1;
     text-align: center;
     font-size: 1.5rem;
