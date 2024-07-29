@@ -18,6 +18,15 @@ const FindFriendsPage = () => {
     const fetchedUsers = [
       { id: 1, username: 'User1', profilePic: 'path_to_image', status: 'online' },
       { id: 2, username: 'User2', profilePic: 'path_to_image', status: 'offline' },
+      { id: 3, username: 'User2', profilePic: 'path_to_image', status: 'offline' },
+      { id: 4, username: 'User2', profilePic: 'path_to_image', status: 'offline' },
+      { id: 5, username: 'User2', profilePic: 'path_to_image', status: 'offline' },
+      { id: 6, username: 'User2', profilePic: 'path_to_image', status: 'offline' },
+      { id: 7, username: 'User2', profilePic: 'path_to_image', status: 'offline' },
+      { id: 8, username: 'User2', profilePic: 'path_to_image', status: 'offline' },
+      { id: 9, username: 'User2', profilePic: 'path_to_image', status: 'offline' },
+      { id: 10, username: 'User2', profilePic: 'path_to_image', status: 'offline' },
+      { id: 11, username: 'User2', profilePic: 'path_to_image', status: 'offline' },
       // Add more users here
     ];
     setUsers(fetchedUsers);
