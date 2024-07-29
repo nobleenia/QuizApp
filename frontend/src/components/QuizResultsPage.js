@@ -50,7 +50,7 @@ const QuizResultsPage = () => {
     <div className="quiz-results-page">
       <header className="results-header">
         <FiArrowLeft className="back-button" onClick={() => navigate(-1)} />
-        <h1>{quizResults.title}</h1>
+        <h1 className='page-title'>Quiz Results</h1>
         <button className="layout-button" onClick={handleLogoutClick}>
           Log Out
         </button>
