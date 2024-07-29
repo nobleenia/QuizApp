@@ -124,6 +124,20 @@ const ProfileScreen = () => {
           </div>
           <button className="find-friends-button" onClick={() => navigate('/find-friends')}>Find Friends</button>
         </div>
+        <div className="friend-requests-section">
+          <h3>Friend Requests</h3>
+          <div className="friend-requests-grid">
+            {friends.length === 0 ? (
+              <p>No friends requests.</p>
+            ) : (
+              friends.map((friend, index) => (
+                <div className="friend" key={index}>
+                  <p>{friend.name}</p>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
       </main>
       {showSettings && (
         <div className="settings-popup">

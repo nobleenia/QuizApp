@@ -29,6 +29,12 @@ import { ReactComponent as PopIcon } from '../assets/categories/pop.svg';
 import { ReactComponent as LanguagesIcon } from '../assets/categories/languages.svg';
 import { ReactComponent as HobbiesIcon } from '../assets/categories/hobbies.svg';
 import { ReactComponent as SpaceIcon } from '../assets/categories/space.svg';
+import { ReactComponent as ArchitectureIcon } from '../assets/categories/architecture.svg';
+import { ReactComponent as HealthIcon } from '../assets/categories/health.svg';
+import { ReactComponent as TravelIcon } from '../assets/categories/travel.svg';
+import { ReactComponent as PsychologyIcon } from '../assets/categories/psychology.svg';
+import { ReactComponent as PhilosophyIcon } from '../assets/categories/philosophy.svg';
+import { ReactComponent as LiteratureIcon } from '../assets/categories/literature.svg';
 
 const HomeScreen = () => {
   const [showMoreCategories, setShowMoreCategories] = useState(false);
@@ -64,6 +70,12 @@ const HomeScreen = () => {
     { Icon: LanguagesIcon, name: 'Languages' },
     { Icon: HobbiesIcon, name: 'Hobbies' },
     { Icon: SpaceIcon, name: 'Space' },
+    { Icon: ArchitectureIcon, name: 'Architecture' },
+    { Icon: HealthIcon, name: 'Health & Medicine' },
+    { Icon: TravelIcon, name: 'Travel & Tourism' },
+    { Icon: PsychologyIcon, name: 'Psychology' },
+    { Icon: PhilosophyIcon, name: 'Philosophy' },
+    { Icon: LiteratureIcon, name: 'Philosophy' },
   ];
 
   useEffect(() => {
