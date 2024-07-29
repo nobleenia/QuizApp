@@ -122,7 +122,7 @@ const ProfileScreen = () => {
               ))
             )}
           </div>
-          <button className="find-friends-button">Find Friends</button>
+          <button className="find-friends-button" onClick={() => navigate('/find-friends')}>Find Friends</button>
         </div>
       </main>
       {showSettings && (

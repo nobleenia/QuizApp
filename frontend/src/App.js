@@ -11,9 +11,10 @@ import QuizSelectionScreen from './components/QuizSelectionScreen';
 import QuizScreen from './components/QuizScreen';
 import NotificationScreen from './components/NotificationScreen';
 import CommunityPage from './components/CommunityPage';
-import FloatingIcon from './components/FloatingIcon'; // Assuming this is your floating icon component
+import FloatingIcon from './components/FloatingIcon';
 import QuizResultsPage from './components/QuizResultsPage';
 import QuizAnalysisPage from './components/QuizAnalysisPage';
+import FindFriendsPage from './components/FindFriendsPage';
 import './App.css';
 
 const App = () => {
@@ -45,6 +46,7 @@ const App = () => {
               <Route path="/community" element={<CommunityPage />} />
               <Route path="/results/:quizId" element={<QuizResultsPage />} />
               <Route path="/quiz-analysis" element={<QuizAnalysisPage />} />
+              <Route path="/find-friends" element={<FindFriendsPage />} />
             </Routes>
             <FloatingIconWrapper />
           </>
