@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import './ProfileScreen.css';
-import userImage from '../assets/userImage.jpg'; // Placeholder for user's image
-import badgeIcon from '../assets/badgeIcon.png'; // Placeholder for badge icon
+import userImage from '../assets/userImage.jpg';
+import badgeIcon from '../assets/badgeIcon.png';
 import Footer from './Footer';
-import { FiArrowLeft, FiSettings, FiEdit, FiBell, FiX } from 'react-icons/fi'; // Using react-icons for settings, edit, and close icons
+import { FiArrowLeft, FiSettings, FiEdit, FiBell, FiX } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 
 const ProfileScreen = () => {
@@ -139,15 +139,14 @@ const ProfileScreen = () => {
             </div>
             <p>Change Password</p>
             <p>Change Username</p>
-            <div className="settings-item" onClick={handleAnalysisLink} style={{ cursor: 'pointer' }}>
+            <div className="settings-item">
               <p>Notifications</p>
               <div className="toggle-switch" onClick={toggleNotifications}>
                 <div className={`toggle-slider ${notificationsEnabled ? 'on' : 'off'}`}></div>
               </div>
             </div>
-            <div className='settings-item'>
+            <div className='settings-item' onClick={handleAnalysisLink} style={{ cursor: 'pointer' }}>
               <p>View Analysis & Insights</p>
-
             </div>
             <p className="settings-logout" onClick={handleLogoutClick}>Logout</p>
             <div className="settings-save-button-container">

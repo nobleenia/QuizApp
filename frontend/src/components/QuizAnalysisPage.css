@@ -13,6 +13,14 @@
     background-color: #07610a;
     color: white;
   }
+
+  .page-title {
+    flex-grow: 1;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: white;
+}
   
   .analysis-header h1 {
     margin: 0;
@@ -62,3 +70,10 @@
     margin-top: auto;
   }
   
+  .notification-icon {
+    font-size: 1.5rem;
+    color: white;
+    cursor: pointer;
+    margin-right: 1rem;
+    transition: transform 0.3s ease-in-out;
+  }

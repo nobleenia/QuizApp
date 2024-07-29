@@ -17,6 +17,14 @@
   .results-header h1 {
     margin: 0;
   }
+
+  .page-title {
+    flex-grow: 1;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: white;
+}
   
   .back-button {
     background-color: transparent;
