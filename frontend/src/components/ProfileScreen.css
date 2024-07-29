@@ -102,7 +102,9 @@
 }
 
 /* Achievements and Friends Sections */
-.achievements-section, .friends-section {
+.achievements-section,
+.friends-section,
+.friend-requests-section {
     border: 1px solid #ddd;
     border-radius: 8px;
     padding: 1.5rem;
