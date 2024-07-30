@@ -8,6 +8,7 @@ const SignUp = () => {
     country: '',
     phone: '',
     email: '',
+    username: '',
     password: '',
     confirmPassword: '',
   });
@@ -21,10 +22,35 @@ const SignUp = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Add logic to handle sign-up form submission
-    navigate('/verification');
+
+    // Simple client-side validation
+    if (formData.password !== formData.confirmPassword) {
+      alert('Passwords do not match!');
+      return;
+    }
+
+    try {
+      const response = await fetch('http://localhost:5000/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        // Handle success
+        navigate('/home');
+      } else {
+        // Handle error
+        alert(data?.message || 'Registration failed');
+      }
+    } catch (error) {
+      console.error('Error during registration:', error);
+    }
   };
 
   return (
@@ -65,6 +91,15 @@ const SignUp = () => {
               value={formData.email}
               onChange={handleChange}
               placeholder="Enter E-mail"
+            />
+          </div>
+          <div className="auth-input">
+            <input
+              type="username"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+              placeholder="Enter Username"
             />
           </div>
           <div className="auth-input">
