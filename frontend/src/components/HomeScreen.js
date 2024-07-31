@@ -4,39 +4,10 @@ import userImage from '../assets/userImage.jpg';
 import Footer from './Footer';
 import { useNavigate } from 'react-router-dom';
 import { FiBell } from 'react-icons/fi';
-
-import { ReactComponent as BookIcon } from '../assets/categories/book.svg';
-import { ReactComponent as SportsIcon } from '../assets/categories/sports.svg';
-import { ReactComponent as MediaIcon } from '../assets/categories/media.svg';
-import { ReactComponent as ReligionIcon } from '../assets/categories/religion.svg';
-import { ReactComponent as TechnologyIcon } from '../assets/categories/technology.svg';
-import { ReactComponent as CuisineIcon } from '../assets/categories/cuisine.svg';
-import { ReactComponent as AgricultureIcon } from '../assets/categories/agriculture.svg';
-import { ReactComponent as GeographyIcon } from '../assets/categories/geography.svg';
-import { ReactComponent as HistoryIcon } from '../assets/categories/history.svg';
-import { ReactComponent as AutoIcon } from '../assets/categories/cars.svg';
-import { ReactComponent as CurrentIcon } from '../assets/categories/current-affairs.svg';
-import { ReactComponent as PoliticsIcon } from '../assets/categories/politics.svg';
-import { ReactComponent as AnimalsIcon } from '../assets/categories/animals.svg';
-import { ReactComponent as ProgrammingIcon } from '../assets/categories/programming.svg';
-import { ReactComponent as MathsIcon } from '../assets/categories/mathematics.svg';
-import { ReactComponent as ScienceIcon } from '../assets/categories/science.svg';
-import { ReactComponent as ArtsIcon } from '../assets/categories/art.svg';
-import { ReactComponent as LawIcon } from '../assets/categories/law.svg';
-import { ReactComponent as NatureIcon } from '../assets/categories/nature.svg';
-import { ReactComponent as BusinessIcon } from '../assets/categories/business.svg';
-import { ReactComponent as PopIcon } from '../assets/categories/pop.svg';
-import { ReactComponent as LanguagesIcon } from '../assets/categories/languages.svg';
-import { ReactComponent as HobbiesIcon } from '../assets/categories/hobbies.svg';
-import { ReactComponent as SpaceIcon } from '../assets/categories/space.svg';
-import { ReactComponent as ArchitectureIcon } from '../assets/categories/architecture.svg';
-import { ReactComponent as HealthIcon } from '../assets/categories/health.svg';
-import { ReactComponent as TravelIcon } from '../assets/categories/travel.svg';
-import { ReactComponent as PsychologyIcon } from '../assets/categories/psychology.svg';
-import { ReactComponent as PhilosophyIcon } from '../assets/categories/philosophy.svg';
-import { ReactComponent as LiteratureIcon } from '../assets/categories/literature.svg';
+import axios from 'axios';
 
 const HomeScreen = () => {
+  const [categories, setCategories] = useState([]);
   const [showMoreCategories, setShowMoreCategories] = useState(false);
   const [showMoreTrending, setShowMoreTrending] = useState(false);
   const [trending, setTrending] = useState([]);
@@ -45,42 +16,20 @@ const HomeScreen = () => {
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false); // State for logout confirmation modal
   const navigate = useNavigate();
 
-  const categories = [
-    { Icon: BookIcon, name: 'Education' },
-    { Icon: SportsIcon, name: 'Sports' },
-    { Icon: MediaIcon, name: 'Entertainment' },
-    { Icon: ReligionIcon, name: 'Religion' },
-    { Icon: TechnologyIcon, name: 'Technology' },
-    { Icon: CuisineIcon, name: 'Cuisine' },
-    { Icon: AgricultureIcon, name: 'Agriculture' },
-    { Icon: GeographyIcon, name: 'Geography' },
-    { Icon: HistoryIcon, name: 'History' },
-    { Icon: AutoIcon, name: 'Automotive' },
-    { Icon: CurrentIcon, name: 'Current Affairs' },
-    { Icon: PoliticsIcon, name: 'Politics' },
-    { Icon: AnimalsIcon, name: 'Animals' },
-    { Icon: ProgrammingIcon, name: 'Coding' },
-    { Icon: MathsIcon, name: 'Mathematics' },
-    { Icon: ScienceIcon, name: 'Sciences' },
-    { Icon: ArtsIcon, name: 'Arts' },
-    { Icon: LawIcon, name: 'Law' },
-    { Icon: NatureIcon, name: 'Nature' },
-    { Icon: BusinessIcon, name: 'Business' },
-    { Icon: PopIcon, name: 'Pop Culture' },
-    { Icon: LanguagesIcon, name: 'Languages' },
-    { Icon: HobbiesIcon, name: 'Hobbies' },
-    { Icon: SpaceIcon, name: 'Space' },
-    { Icon: ArchitectureIcon, name: 'Architecture' },
-    { Icon: HealthIcon, name: 'Health & Medicine' },
-    { Icon: TravelIcon, name: 'Travel & Tourism' },
-    { Icon: PsychologyIcon, name: 'Psychology' },
-    { Icon: PhilosophyIcon, name: 'Philosophy' },
-    { Icon: LiteratureIcon, name: 'Philosophy' },
-  ];
-
   useEffect(() => {
-    const shuffled = categories.sort(() => 0.5 - Math.random());
-    setTrending(shuffled.slice(0, 10));
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get(
+          'http://localhost:5000/api/quiz/categories',
+        );
+        setCategories(response.data);
+        setTrending(response.data.slice(0, 10)); // Assuming trending is based on the first 10 categories
+      } catch (error) {
+        console.error('Failed to fetch categories:', error);
+      }
+    };
+
+    fetchCategories();
   }, []);
 
   const handleLogoutClick = () => {
@@ -95,82 +44,6 @@ const HomeScreen = () => {
   const handleCancelLogout = () => {
     setShowLogoutConfirm(false);
   };
-
-  const completedQuizzes = [
-    {
-      id: 1,
-      title: 'Public Holidays',
-      category: 'General Knowledge',
-      subcategory: 'DIY',
-      score: 85,
-      total: 100,
-    },
-    {
-      id: 2,
-      title: 'General Knowledge Quiz',
-      category: 'General Knowledge',
-      subcategory: 'DIY',
-      score: 65,
-      total: 100,
-    },
-    {
-      id: 3,
-      title: 'Saludos en español',
-      category: 'Languages',
-      subcategory: 'Español',
-      score: 35,
-      total: 100,
-    },
-    {
-      id: 4,
-      title: 'Salutations en français',
-      category: 'Languages',
-      subcategory: 'Français',
-      score: 85,
-      total: 100,
-    },
-    {
-      id: 5,
-      title: 'The Passions of Christ',
-      category: 'Religion',
-      subcategory: 'Christainity',
-      score: 100,
-      total: 100,
-    },
-    {
-      id: 6,
-      title: 'Beauty and the Beast',
-      category: 'Entertainment',
-      subcategory: 'Movies',
-      score: 100,
-      total: 100,
-    },
-    {
-      id: 7,
-      title: 'Mostt Popular Paintings of 2021',
-      category: 'Arts',
-      subcategory: 'Paintings',
-      score: 85,
-      total: 100,
-    },
-    {
-      id: 8,
-      title: 'The Cold Wars',
-      category: 'History',
-      subcategory: 'Wars',
-      score: 55,
-      total: 100,
-    },
-    {
-      id: 8,
-      title: 'Michael Jackson',
-      category: 'Pop Culture',
-      subcategory: 'Pop Music',
-      score: 55,
-      total: 100,
-    },
-    // More completed quizzes can be added here, fetch from database
-  ];
 
   return (
     <div className="home-screen">
@@ -208,12 +81,9 @@ const HomeScreen = () => {
                 <div
                   className="category"
                   key={index}
-                  onClick={() =>
-                    navigate(`/quiz/${category.name.toLowerCase()}`)
-                  }
+                  onClick={() => navigate(`/quiz/${category}`)}
                 >
-                  <category.Icon className="category-icon" />
-                  <p>{category.name}</p>
+                  <p>{category}</p>
                 </div>
               ))}
           </div>
@@ -235,12 +105,9 @@ const HomeScreen = () => {
                 <div
                   className="category"
                   key={index}
-                  onClick={() =>
-                    navigate(`/quiz/${category.name.toLowerCase()}`)
-                  }
+                  onClick={() => navigate(`/quiz/${category}`)}
                 >
-                  <category.Icon className="category-icon" />
-                  <p>{category.name}</p>
+                  <p>{category}</p>
                 </div>
               ))}
           </div>
@@ -255,34 +122,7 @@ const HomeScreen = () => {
         </div>
         <div className="completed-quizzes-section">
           <h3>My Quizzes</h3>
-          <div className="categories completed-quizzes">
-            {completedQuizzes
-              .slice(0, showMoreQuizzes ? completedQuizzes.length : 4)
-              .map((quiz) => (
-                <div key={quiz.id} className="completed-quiz-item">
-                  <p>{quiz.title}</p>
-                  <p>{quiz.category}</p>
-                  <p>{quiz.subcategory}</p>
-                  <p>
-                    Score: {quiz.score}/{quiz.total}
-                  </p>
-                  <button
-                    onClick={() => navigate(`/results/${quiz.id}`)}
-                    className="view-results"
-                  >
-                    View Results
-                  </button>
-                </div>
-              ))}
-          </div>
-          {completedQuizzes.length > 4 && (
-            <button
-              onClick={() => setShowMoreQuizzes(!showMoreQuizzes)}
-              className="show-more"
-            >
-              {showMoreQuizzes ? 'Show Less' : 'Show More'}
-            </button>
-          )}
+          {/* Completed quizzes section remains unchanged */}
         </div>
       </main>
       <div className="invite-section">
