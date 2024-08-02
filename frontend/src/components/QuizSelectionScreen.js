@@ -15,37 +15,29 @@ const QuizSelectionScreen = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await axios.get(
-          'http://localhost:5000/api/quiz/categories',
-        );
-        const fetchedCategories = response.data;
-        console.log('Fetched categories:', fetchedCategories); // Debugging
+    if (category) {
+      const fetchSubcategories = async () => {
+        try {
+          const fetchedSubcategories = categoryGroups[category]?.keywords || [];
+          console.log('Fetched subcategories:', fetchedSubcategories);
+          setSubcategories(fetchedSubcategories);
 
-        if (categoryGroups[category]) {
-          const keywords = categoryGroups[category].keywords;
-          console.log('Group keywords:', keywords); // Debugging
-
-          const filteredData = fetchedCategories.filter((cat) =>
-            keywords.some((keyword) =>
-              cat.toLowerCase().includes(keyword.toLowerCase()),
-            ),
-          );
-
-          console.log('Filtered subcategories:', filteredData); // Debugging
-          setSubcategories(filteredData);
-
-          if (filteredData.length > 0) {
-            setSelectedSubcategory(filteredData[0]);
+          if (fetchedSubcategories.length > 0) {
+            setSelectedSubcategory(fetchedSubcategories[0]);
+            console.log('Selected subcategory:', fetchedSubcategories[0]);
           }
+        } catch (error) {
+          console.error(
+            `Failed to fetch subcategories for ${category}:`,
+            error,
+          );
         }
-      } catch (error) {
-        console.error(`Failed to fetch categories for ${category}:`, error);
-      }
-    };
+      };
 
-    fetchCategories();
+      fetchSubcategories();
+    } else {
+      console.error('No category found in the URL');
+    }
   }, [category]);
 
   useEffect(() => {
@@ -53,9 +45,9 @@ const QuizSelectionScreen = () => {
       const fetchQuizzes = async () => {
         try {
           const response = await axios.get(
-            `http://localhost:5000/api/quiz/subcategories/${selectedSubcategory}`,
+            `http://localhost:5000/api/quiz/quizzes/${selectedSubcategory}`,
           );
-          setQuizzes(response.data.quizzes);
+          setQuizzes(response.data);
         } catch (error) {
           console.error(
             `Failed to fetch quizzes for ${selectedSubcategory}:`,
@@ -85,8 +77,8 @@ const QuizSelectionScreen = () => {
     setSelectedSubcategory(e.target.value);
   };
 
-  const handleQuizClick = (quizName) => {
-    navigate(`/quiz/${category}/${quizName}`);
+  const handleQuizClick = (quizId) => {
+    navigate(`/quiz/${category}/${quizId}`);
   };
 
   return (
@@ -128,15 +120,11 @@ const QuizSelectionScreen = () => {
           {quizzes.map((quiz, index) => (
             <div
               key={index}
-              className={`quiz-item ${quiz.locked ? 'locked' : 'unlocked'}`}
-              onClick={() => !quiz.locked && handleQuizClick(quiz.name)}
+              className="quiz-item"
+              onClick={() => handleQuizClick(quiz.id)}
             >
-              <p>{quiz.name}</p>
-              {quiz.locked ? (
-                <span className="lock-icon">🔒</span>
-              ) : (
-                <span className="unlock-icon">🔓</span>
-              )}
+              <p>{quiz.question.text}</p>{' '}
+              {/* Accessing the text property of the question object */}
             </div>
           ))}
         </div>
