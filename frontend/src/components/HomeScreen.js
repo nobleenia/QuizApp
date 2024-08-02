@@ -5,9 +5,11 @@ import Footer from './Footer';
 import { useNavigate } from 'react-router-dom';
 import { FiBell } from 'react-icons/fi';
 import axios from 'axios';
+import categoryGroups from '../config/categoryGroups';
 
 const HomeScreen = () => {
   const [categories, setCategories] = useState([]);
+  const [groupedCategories, setGroupedCategories] = useState({});
   const [showMoreCategories, setShowMoreCategories] = useState(false);
   const [showMoreTrending, setShowMoreTrending] = useState(false);
   const [trending, setTrending] = useState([]);
@@ -22,8 +24,12 @@ const HomeScreen = () => {
         const response = await axios.get(
           'http://localhost:5000/api/quiz/categories',
         );
-        setCategories(response.data);
-        setTrending(response.data.slice(0, 10)); // Assuming trending is based on the first 10 categories
+        const fetchedCategories = response.data;
+        setCategories(fetchedCategories);
+        setTrending(
+          fetchedCategories.sort(() => Math.random() - 0.5).slice(0, 20),
+        );
+        setGroupedCategories(categorize(fetchedCategories, categoryGroups));
       } catch (error) {
         console.error('Failed to fetch categories:', error);
       }
@@ -31,6 +37,36 @@ const HomeScreen = () => {
 
     fetchCategories();
   }, []);
+
+  const categorize = (categories, categoryGroups) => {
+    const groupedCategories = {};
+
+    // Initialize the groupedCategories with empty arrays
+    Object.keys(categoryGroups).forEach((group) => {
+      groupedCategories[group] = [];
+    });
+
+    categories.forEach((category) => {
+      let added = false;
+      Object.keys(categoryGroups).forEach((group) => {
+        categoryGroups[group].keywords.forEach((keyword) => {
+          if (category.toLowerCase().includes(keyword.toLowerCase())) {
+            groupedCategories[group].push(category);
+            added = true;
+          }
+        });
+      });
+
+      if (!added) {
+        if (!groupedCategories.Other) {
+          groupedCategories.Other = [];
+        }
+        groupedCategories.Other.push(category);
+      }
+    });
+
+    return groupedCategories;
+  };
 
   const handleLogoutClick = () => {
     setShowLogoutConfirm(true);
@@ -43,6 +79,10 @@ const HomeScreen = () => {
 
   const handleCancelLogout = () => {
     setShowLogoutConfirm(false);
+  };
+
+  const handleGroupClick = (group) => {
+    navigate(`/quiz/${group}`);
   };
 
   return (
@@ -75,19 +115,26 @@ const HomeScreen = () => {
         <div className="categories-section">
           <h3>Quiz Categories</h3>
           <div className="categories">
-            {categories
-              .slice(0, showMoreCategories ? categories.length : 12)
-              .map((category, index) => (
-                <div
-                  className="category"
-                  key={index}
-                  onClick={() => navigate(`/quiz/${category}`)}
-                >
-                  <p>{category}</p>
-                </div>
-              ))}
+            {Object.entries(groupedCategories)
+              .slice(
+                0,
+                showMoreCategories ? Object.keys(groupedCategories).length : 12,
+              )
+              .map(([group, categories], index) => {
+                const GroupIcon = categoryGroups[group]?.Icon;
+                return (
+                  <div
+                    className="group-item"
+                    key={index}
+                    onClick={() => handleGroupClick(group)}
+                  >
+                    {GroupIcon && <GroupIcon className="group-icon" />}
+                    <p>{group}</p>
+                  </div>
+                );
+              })}
           </div>
-          {categories.length > 12 && (
+          {Object.keys(groupedCategories).length > 12 && (
             <button
               onClick={() => setShowMoreCategories(!showMoreCategories)}
               className="show-more"
@@ -122,7 +169,24 @@ const HomeScreen = () => {
         </div>
         <div className="completed-quizzes-section">
           <h3>My Quizzes</h3>
-          {/* Completed quizzes section remains unchanged */}
+          {/* completedQuizzes
+            .slice(0, showMoreQuizzes ? completedQuizzes.length : 4)
+            .map((quiz) => (
+              <div key={quiz.id} className="completed-quiz-item">
+                <p>{quiz.title}</p>
+                <p>{quiz.category}</p>
+                <p>{quiz.subcategory}</p>
+                <p>
+                  Score: {quiz.score}/{quiz.total}
+                </p>
+                <button
+                  onClick={() => navigate(`/results/${quiz.id}`)}
+                  className="view-results"
+                >
+                  View Results
+                </button>
+              </div>
+            ))*/}
         </div>
       </main>
       <div className="invite-section">

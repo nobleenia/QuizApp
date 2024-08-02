@@ -1,9 +1,11 @@
+// QuizSelectionScreen.js
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './QuizSelectionScreen.css';
 import userImage from '../assets/userImage.jpg';
 import Footer from './Footer';
-import categoriesData from '../data/categoriesData'; // Import categories and subcategories data
+import axios from 'axios';
+import categoryGroups from '../config/categoryGroups';
 
 const QuizSelectionScreen = () => {
   const { category } = useParams(); // Get the category from the URL parameters
@@ -13,26 +15,51 @@ const QuizSelectionScreen = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (categoriesData[category]) {
-      const loadedSubcategories = categoriesData[category];
-      setSubcategories(loadedSubcategories);
+    if (category) {
+      const fetchSubcategories = async () => {
+        try {
+          const response = await axios.get(
+            `http://localhost:5000/api/quiz/categories/${category}`,
+          );
+          const fetchedSubcategories = categoryGroups[category]?.keywords || [];
+          console.log('Fetched subcategories:', fetchedSubcategories);
+          setSubcategories(fetchedSubcategories);
 
-      if (loadedSubcategories.length > 0) {
-        setSelectedSubcategory(loadedSubcategories[0]);
-      }
+          if (fetchedSubcategories.length > 0) {
+            setSelectedSubcategory(fetchedSubcategories[0]);
+            console.log('Selected subcategory:', selectedSubcategory);
+          }
+        } catch (error) {
+          console.error(
+            `Failed to fetch subcategories for ${category}:`,
+            error,
+          );
+        }
+      };
+
+      fetchSubcategories();
     } else {
-      console.error(`Category ${category} not found in data`);
+      console.error('No category found in the URL');
     }
   }, [category]);
 
   useEffect(() => {
     if (selectedSubcategory) {
-      const fetchedQuizzes = [
-        { name: 'Quiz 1', locked: false },
-        { name: 'Quiz 2', locked: true },
-        { name: 'Quiz 3', locked: true },
-      ];
-      setQuizzes(fetchedQuizzes);
+      const fetchQuizzes = async () => {
+        try {
+          const response = await axios.get(
+            `http://localhost:5000/api/quiz/subcategories/${selectedSubcategory}`,
+          );
+          setQuizzes(response.data.quizzes);
+        } catch (error) {
+          console.error(
+            `Failed to fetch quizzes for ${selectedSubcategory}:`,
+            error,
+          );
+        }
+      };
+
+      fetchQuizzes();
     }
   }, [selectedSubcategory]);
 
@@ -60,7 +87,10 @@ const QuizSelectionScreen = () => {
       </header>
       <main className="quiz-selection-main">
         <h2>
-          Category: {category.charAt(0).toUpperCase() + category.slice(1)}
+          Category:{' '}
+          {category
+            ? category.charAt(0).toUpperCase() + category.slice(1)
+            : 'Unknown'}
         </h2>
         <div className="subcategory-selector">
           <label htmlFor="subcategory-select">Select Subcategory:</label>

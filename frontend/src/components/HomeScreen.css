@@ -1,3 +1,4 @@
+/* HomeScreen.css */
 .home-header {
   display: flex;
   align-items: center;
@@ -71,28 +72,29 @@
   overflow: hidden;
 }
 
-.categories {
+.categories, .trending {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   gap: 0.25rem;
 }
 
-.category {
+.group-item, .category {
   display: flex;
   flex-direction: column;
   align-items: center;
   cursor: pointer;
 }
 
-.category-icon {
-  width: 100px;
-  height: 100px;
+.group-icon, .category-icon {
+  width: 65px; /* Smaller width */
+  height: 65px; /* Smaller height */
   margin-bottom: 0.5rem;
   transition: transform 0.5s ease-in-out;
 }
 
-.category-icon:hover {
-  transform: scale(1.2) rotate(180deg);
+.group-icon:hover, .category-icon:hover {
+  transform: scale(1.1);
+  transform: rotate(360deg);
 }
 
 .show-more {
@@ -105,13 +107,6 @@
   font-size: 1rem;
   cursor: pointer;
   border-radius: 10px;
-}
-
-.completed-quiz-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  cursor: pointer;
 }
 
 .invite-section {
@@ -131,10 +126,10 @@
 }
 
 .invite-section:hover {
-  transform: scale(1.05); /* Slightly enlarge on hover for emphasis */
+  transform: scale(1.05);
 }
 
-.invite-popup {
+.invite-popup, .logout-confirm-modal {
   position: fixed;
   top: 50%;
   left: 50%;
@@ -144,45 +139,24 @@
   padding: 2rem;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   z-index: 1000;
+  border-radius: 10px;
 }
 
-.invite-popup .invite-content {
+.invite-popup .invite-content, .logout-confirm-content {
   text-align: center;
 }
 
-.invite-popup .invite-content h3 {
+.invite-popup .invite-content h3, .logout-confirm-content p {
   margin-bottom: 1rem;
 }
 
-.invite-popup .invite-content p {
-  margin-bottom: 1rem;
-}
-
-.invite-popup .invite-content button {
+.invite-popup .invite-content button, .logout-confirm-buttons button {
   background-color: #07610a;
   color: white;
   border: none;
   padding: 0.5rem 1rem;
   cursor: pointer;
   border-radius: 10px;
-}
-
-/* Logout Confirmation Modal */
-.logout-confirm-modal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: white;
-  border: 1px solid #ddd;
-  padding: 2rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
-  border-radius: 10px;
-}
-
-.logout-confirm-content {
-  text-align: center;
 }
 
 .logout-confirm-buttons {
@@ -191,32 +165,11 @@
   margin-top: 1rem;
 }
 
-.logout-confirm-buttons button {
-  background-color: #07610a;
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
-  cursor: pointer;
-  border-radius: 10px;
-}
-
 .logout-confirm-buttons button:hover {
   background-color: #06560a;
 }
 
-.notification-icon {
-  font-size: 1.5rem;
-  color: white;
-  cursor: pointer;
-  margin-right: 1rem;
-  transition: transform 0.3s ease-in-out;
-}
-
-.notification-icon:hover {
-  transform: scale(1.2);
-}
-
+/* Completed Quiz Item styles */
 .completed-quiz-item {
   border: 1px solid #ddd;
   border-radius: 8px;
