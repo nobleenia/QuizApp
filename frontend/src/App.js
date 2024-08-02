@@ -21,6 +21,7 @@ import QuizResultsPage from './components/QuizResultsPage';
 import QuizAnalysisPage from './components/QuizAnalysisPage';
 import FindFriendsPage from './components/FindFriendsPage';
 import QuizCompletionScreen from './components/QuizCompletionScreen';
+import CategoryDetailsScreen from './components/CategoryDetailsScreen'; // Import the new component
 import './App.css';
 
 const App = () => {
@@ -56,6 +57,10 @@ const App = () => {
               <Route
                 path="/quiz-completion"
                 element={<QuizCompletionScreen />}
+              />
+              <Route
+                path="/category-details/:group"
+                element={<CategoryDetailsScreen />}
               />
             </Routes>
             <FloatingIconWrapper />

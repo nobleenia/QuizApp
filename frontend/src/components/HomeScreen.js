@@ -82,7 +82,7 @@ const HomeScreen = () => {
   };
 
   const handleGroupClick = (group) => {
-    navigate(`/quiz/${group}`);
+    navigate(`/category-details/${group}`);
   };
 
   return (
