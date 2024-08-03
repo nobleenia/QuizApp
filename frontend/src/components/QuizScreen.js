@@ -11,15 +11,26 @@ const QuizScreen = () => {
   const [questions, setQuestions] = useState(questionsFromLocation);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState(null);
-  const [timeRemaining, setTimeRemaining] = useState(300); // 5 minutes in seconds
+  const [timeRemaining, setTimeRemaining] = useState(30); // 30 seconds per question
+  const [scores, setScores] = useState(0); // Score state
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const storedState = JSON.parse(localStorage.getItem('quizState'));
+    if (storedState && storedState.quizId === quizId) {
+      setCurrentQuestionIndex(storedState.currentQuestionIndex);
+      setTimeRemaining(storedState.timeRemaining);
+      setScores(storedState.scores);
+      setQuestions(storedState.questions);
+    }
+  }, [quizId]);
 
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeRemaining((prev) => {
         if (prev <= 0) {
           clearInterval(timer);
-          handleQuizCompletion();
+          handleNextQuestion();
           return 0;
         }
         return prev - 1;
@@ -27,16 +38,30 @@ const QuizScreen = () => {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [currentQuestionIndex]);
+
+  useEffect(() => {
+    if (selectedOption !== null) {
+      const correctAnswer = questions[currentQuestionIndex]?.correctAnswer;
+      if (selectedOption === correctAnswer) {
+        setScores(scores + 10);
+      }
+    }
+  }, [selectedOption]);
 
   const handleOptionSelect = (index) => {
-    setSelectedOption(index);
+    if (selectedOption === null) {
+      setSelectedOption(index);
+    }
   };
 
   const handleNextQuestion = () => {
-    if (currentQuestionIndex < questions.length - 1) {
+    if (selectedOption === null) {
+      setTimeRemaining(30);
+    } else if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
       setSelectedOption(null);
+      setTimeRemaining(30);
     } else {
       handleQuizCompletion();
     }
@@ -44,7 +69,9 @@ const QuizScreen = () => {
 
   const handleQuizCompletion = () => {
     markSessionAsCompleted();
-    navigate('/quiz-completion');
+    navigate('/quiz-completion', {
+      state: { scores, totalQuestions: questions.length },
+    });
   };
 
   const markSessionAsCompleted = () => {
@@ -60,6 +87,33 @@ const QuizScreen = () => {
     }
   };
 
+  const saveQuizState = () => {
+    const quizState = {
+      quizId,
+      currentQuestionIndex,
+      timeRemaining,
+      scores,
+      questions,
+    };
+    localStorage.setItem('quizState', JSON.stringify(quizState));
+  };
+
+  const handleLogoutClick = () => {
+    saveQuizState();
+    navigate('/login');
+  };
+
+  const getOptionClass = (index) => {
+    if (selectedOption !== null) {
+      if (index === questions[currentQuestionIndex]?.correctAnswer) {
+        return 'correct';
+      } else if (index === selectedOption) {
+        return 'wrong';
+      }
+    }
+    return selectedOption === index ? 'selected' : '';
+  };
+
   return (
     <div className="quiz-screen">
       <header className="quiz-header">
@@ -70,11 +124,17 @@ const QuizScreen = () => {
           onClick={() => navigate('/profile')}
         />
         <h1 className="quiz-title">QuizApp</h1>
-        <button className="layout-button" onClick={() => navigate('/login')}>
+        <button className="layout-button" onClick={handleLogoutClick}>
           Log Out
         </button>
       </header>
       <main className="quiz-main">
+        <div className="progress-bar">
+          <div
+            className="progress"
+            style={{ width: `${(timeRemaining / 30) * 100}%` }}
+          ></div>
+        </div>
         <div className="quiz-question">
           <h2>Question {currentQuestionIndex + 1}</h2>
           <p>{questions[currentQuestionIndex]?.question.text}</p>
@@ -84,8 +144,9 @@ const QuizScreen = () => {
             (option, index) => (
               <button
                 key={index}
-                className={`option-button ${selectedOption === index ? 'selected' : ''}`}
+                className={`option-button ${getOptionClass(index)}`}
                 onClick={() => handleOptionSelect(index)}
+                disabled={selectedOption !== null}
               >
                 {option}
               </button>
@@ -93,10 +154,11 @@ const QuizScreen = () => {
           )}
           <button
             key="correct"
-            className={`option-button ${selectedOption === questions[currentQuestionIndex]?.correctAnswer ? 'selected' : ''}`}
+            className={`option-button ${getOptionClass(questions[currentQuestionIndex]?.correctAnswer)}`}
             onClick={() =>
               handleOptionSelect(questions[currentQuestionIndex]?.correctAnswer)
             }
+            disabled={selectedOption !== null}
           >
             {questions[currentQuestionIndex]?.correctAnswer}
           </button>

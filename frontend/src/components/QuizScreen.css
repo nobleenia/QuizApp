@@ -51,6 +51,20 @@
     text-align: center;
   }
   
+  .progress-bar {
+    width: 100%;
+    background-color: #ddd;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+  }
+  
+  .progress {
+    height: 10px;
+    background-color: #07610a;
+    transition: width 1s linear;
+  }
+
   .quiz-question {
     margin-bottom: 2rem;
   }
@@ -76,6 +90,16 @@
   .option-button.selected {
     background-color: #b3cab4;
   }
+
+  .option-button.correct {
+    background-color: #4caf50;
+    color: white;
+  }
+  
+  .option-button.wrong {
+    background-color: #f44336;
+    color: white;
+  }
   
   .submit-button {
     margin-top: 2rem;
@@ -88,7 +112,7 @@
     cursor: pointer;
   }
   
-  .submit-button:hover {
+  .submit-button:hover, .option-button:hover {
     background-color: #06560a;
   }
   
