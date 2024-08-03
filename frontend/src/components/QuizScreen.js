@@ -1,20 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import './QuizScreen.css';
 import userImage from '../assets/userImage.jpg';
 import Footer from './Footer';
 
 const QuizScreen = () => {
   const { category, quizId } = useParams();
-  const [questions, setQuestions] = useState([
-    {
-      question:
-        'What is the name of the first thing that crosses your mind when you look at the mirror and smile bright?',
-      options: ['Option A', 'Option B', 'Option C', 'Option D'],
-      correctAnswer: 0,
-    },
-    // Add other questions similarly
-  ]);
+  const location = useLocation();
+  const questionsFromLocation = location.state?.questions || [];
+  const [questions, setQuestions] = useState(questionsFromLocation);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState(null);
   const [timeRemaining, setTimeRemaining] = useState(300); // 5 minutes in seconds
@@ -35,11 +29,6 @@ const QuizScreen = () => {
     return () => clearInterval(timer);
   }, []);
 
-  useEffect(() => {
-    // Load quiz questions based on category and quizId here
-    // For now, we're using hardcoded questions
-  }, [category, quizId]);
-
   const handleOptionSelect = (index) => {
     setSelectedOption(index);
   };
@@ -54,7 +43,6 @@ const QuizScreen = () => {
   };
 
   const handleQuizCompletion = () => {
-    // Navigate to the quiz completion screen or display the completion summary
     navigate('/quiz-completion');
   };
 
@@ -74,19 +62,30 @@ const QuizScreen = () => {
       </header>
       <main className="quiz-main">
         <div className="quiz-question">
-          <h2>Quiz {currentQuestionIndex + 1}</h2>
-          <p>{questions[currentQuestionIndex].question}</p>
+          <h2>Question {currentQuestionIndex + 1}</h2>
+          <p>{questions[currentQuestionIndex]?.question.text}</p>
         </div>
         <div className="quiz-options">
-          {questions[currentQuestionIndex].options.map((option, index) => (
-            <button
-              key={index}
-              className={`option-button ${selectedOption === index ? 'selected' : ''}`}
-              onClick={() => handleOptionSelect(index)}
-            >
-              {option}
-            </button>
-          ))}
+          {questions[currentQuestionIndex]?.incorrectAnswers.map(
+            (option, index) => (
+              <button
+                key={index}
+                className={`option-button ${selectedOption === index ? 'selected' : ''}`}
+                onClick={() => handleOptionSelect(index)}
+              >
+                {option}
+              </button>
+            ),
+          )}
+          <button
+            key="correct"
+            className={`option-button ${selectedOption === questions[currentQuestionIndex]?.correctAnswer ? 'selected' : ''}`}
+            onClick={() =>
+              handleOptionSelect(questions[currentQuestionIndex]?.correctAnswer)
+            }
+          >
+            {questions[currentQuestionIndex]?.correctAnswer}
+          </button>
         </div>
         <button className="submit-button" onClick={handleNextQuestion}>
           {currentQuestionIndex < questions.length - 1 ? 'Next' : 'Submit'}

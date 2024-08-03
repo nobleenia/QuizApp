@@ -10,7 +10,7 @@ const QuizSelectionScreen = () => {
   const { category } = useParams(); // Get the category from the URL parameters
   const [subcategories, setSubcategories] = useState([]);
   const [selectedSubcategory, setSelectedSubcategory] = useState('');
-  const [quizzes, setQuizzes] = useState([]);
+  const [sessions, setSessions] = useState([]);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const navigate = useNavigate();
 
@@ -42,21 +42,21 @@ const QuizSelectionScreen = () => {
 
   useEffect(() => {
     if (selectedSubcategory) {
-      const fetchQuizzes = async () => {
+      const fetchSessions = async () => {
         try {
           const response = await axios.get(
-            `http://localhost:5000/api/quiz/quizzes/${selectedSubcategory}`,
+            `http://localhost:5000/api/quiz/create-sessions/${selectedSubcategory}`,
           );
-          setQuizzes(response.data);
+          setSessions(response.data); // Set the fetched sessions
         } catch (error) {
           console.error(
-            `Failed to fetch quizzes for ${selectedSubcategory}:`,
+            `Failed to fetch sessions for ${selectedSubcategory}:`,
             error,
           );
         }
       };
 
-      fetchQuizzes();
+      fetchSessions();
     }
   }, [selectedSubcategory]);
 
@@ -77,8 +77,10 @@ const QuizSelectionScreen = () => {
     setSelectedSubcategory(e.target.value);
   };
 
-  const handleQuizClick = (quizId) => {
-    navigate(`/quiz/${category}/${quizId}`);
+  const handleSessionClick = (session) => {
+    navigate(`/quiz/${category}/${session.sessionId}`, {
+      state: { questions: session.questions },
+    });
   };
 
   return (
@@ -117,14 +119,13 @@ const QuizSelectionScreen = () => {
           </select>
         </div>
         <div className="quizzes-list">
-          {quizzes.map((quiz, index) => (
+          {sessions.map((session, index) => (
             <div
               key={index}
               className="quiz-item"
-              onClick={() => handleQuizClick(quiz.id)}
+              onClick={() => handleSessionClick(session)}
             >
-              <p>{quiz.question.text}</p>{' '}
-              {/* Accessing the text property of the question object */}
+              <p>Quiz Session {index + 1}</p>
             </div>
           ))}
         </div>
