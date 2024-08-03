@@ -77,10 +77,32 @@ const QuizSelectionScreen = () => {
     setSelectedSubcategory(e.target.value);
   };
 
-  const handleSessionClick = (session) => {
-    navigate(`/quiz/${category}/${session.sessionId}`, {
-      state: { questions: session.questions },
-    });
+  const handleSessionClick = (session, index) => {
+    if (isSessionAccessible(index)) {
+      navigate(`/quiz/${category}/${session.sessionId}`, {
+        state: { questions: session.questions },
+      });
+    } else {
+      alert('Complete previous quizzes to access this one.');
+    }
+  };
+
+  const isSessionAccessible = (index) => {
+    const completedSessions =
+      JSON.parse(localStorage.getItem('completedSessions')) || [];
+    return index === 0 || completedSessions.includes(index - 1);
+  };
+
+  const markSessionAsCompleted = (index) => {
+    const completedSessions =
+      JSON.parse(localStorage.getItem('completedSessions')) || [];
+    if (!completedSessions.includes(index)) {
+      completedSessions.push(index);
+      localStorage.setItem(
+        'completedSessions',
+        JSON.stringify(completedSessions),
+      );
+    }
   };
 
   return (
@@ -122,8 +144,8 @@ const QuizSelectionScreen = () => {
           {sessions.map((session, index) => (
             <div
               key={index}
-              className="quiz-item"
-              onClick={() => handleSessionClick(session)}
+              className={`quiz-item ${isSessionAccessible(index) ? 'accessible' : 'locked'}`}
+              onClick={() => handleSessionClick(session, index)}
             >
               <p>Quiz Session {index + 1}</p>
             </div>

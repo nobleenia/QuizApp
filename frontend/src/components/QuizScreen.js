@@ -43,7 +43,21 @@ const QuizScreen = () => {
   };
 
   const handleQuizCompletion = () => {
+    markSessionAsCompleted();
     navigate('/quiz-completion');
+  };
+
+  const markSessionAsCompleted = () => {
+    const sessionId = parseInt(quizId.split('-').pop(), 10);
+    const completedSessions =
+      JSON.parse(localStorage.getItem('completedSessions')) || [];
+    if (!completedSessions.includes(sessionId)) {
+      completedSessions.push(sessionId);
+      localStorage.setItem(
+        'completedSessions',
+        JSON.stringify(completedSessions),
+      );
+    }
   };
 
   return (
