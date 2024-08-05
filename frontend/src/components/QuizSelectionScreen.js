@@ -21,11 +21,6 @@ const QuizSelectionScreen = () => {
           const fetchedSubcategories = categoryGroups[category]?.keywords || [];
           console.log('Fetched subcategories:', fetchedSubcategories);
           setSubcategories(fetchedSubcategories);
-
-          if (fetchedSubcategories.length > 0) {
-            setSelectedSubcategory(fetchedSubcategories[0]);
-            console.log('Selected subcategory:', fetchedSubcategories[0]);
-          }
         } catch (error) {
           console.error(
             `Failed to fetch subcategories for ${category}:`,
@@ -93,18 +88,6 @@ const QuizSelectionScreen = () => {
     return index === 0 || completedSessions.includes(index - 1);
   };
 
-  const markSessionAsCompleted = (index) => {
-    const completedSessions =
-      JSON.parse(localStorage.getItem('completedSessions')) || [];
-    if (!completedSessions.includes(index)) {
-      completedSessions.push(index);
-      localStorage.setItem(
-        'completedSessions',
-        JSON.stringify(completedSessions),
-      );
-    }
-  };
-
   return (
     <div className="quiz-selection-screen">
       <header className="quiz-selection-header">
@@ -133,6 +116,9 @@ const QuizSelectionScreen = () => {
             value={selectedSubcategory}
             onChange={handleSubcategoryChange}
           >
+            <option value="" disabled>
+              Select a subcategory
+            </option>
             {subcategories.map((subcat, index) => (
               <option key={index} value={subcat}>
                 {subcat}

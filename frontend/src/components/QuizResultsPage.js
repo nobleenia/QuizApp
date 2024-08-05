@@ -1,36 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import './QuizResultsPage.css';
 import { FiArrowLeft } from 'react-icons/fi';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import Footer from './Footer';
 
 const QuizResultsPage = () => {
   const { quizId } = useParams();
-  const navigate = useNavigate(); // Correct usage of navigate
-  const [quizResults, setQuizResults] = useState(null);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { scores, totalQuestions } = location.state || {}; // Get scores and totalQuestions from the state
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
-  useEffect(() => {
-    // Fetch quiz results data based on quizId (replace with actual API call)
-    const fetchedResults = {
-      title: 'General Knowledge Quiz',
-      score: 85,
-      total: 100,
-      questions: [
-        {
-          question: 'What is the capital of France?',
-          userAnswer: 'Paris',
-          correctAnswer: 'Paris',
-          feedback: 'Correct! Paris is the capital of France.',
-        },
-        // More questions can be added here
-      ],
-    };
-    setQuizResults(fetchedResults);
-  }, [quizId]);
-
-  if (!quizResults) {
-    return <p>Loading...</p>;
+  if (scores === undefined || totalQuestions === undefined) {
+    return <p>Error: No quiz results found.</p>;
   }
 
   const handleLogoutClick = () => {
@@ -46,10 +28,17 @@ const QuizResultsPage = () => {
     setShowLogoutConfirm(false);
   };
 
+  const calculatePercentage = (score, total) => {
+    return (score / (total * 10)) * 100; // Each question is worth 10 points
+  };
+
   return (
     <div className="quiz-results-page">
       <header className="results-header">
-        <FiArrowLeft className="back-button" onClick={() => navigate(-1)} />
+        <FiArrowLeft
+          className="back-button"
+          onClick={() => navigate('/home')}
+        />
         <h1 className="page-title">Quiz Results</h1>
         <button className="layout-button" onClick={handleLogoutClick}>
           Log Out
@@ -59,24 +48,19 @@ const QuizResultsPage = () => {
         <section className="score-summary">
           <h2>Your Score</h2>
           <p>
-            {quizResults.score} / {quizResults.total}
+            {scores} / {totalQuestions * 10}
           </p>
-          <p>Percentage: {(quizResults.score / quizResults.total) * 100}%</p>
-        </section>
-        <section className="question-review">
-          <h2>Review Your Answers</h2>
-          {quizResults.questions.map((question, index) => (
-            <div key={index} className="question-item">
-              <h3>Question: {question.question}</h3>
-              <p>Your Answer: {question.userAnswer}</p>
-              <p>Correct Answer: {question.correctAnswer}</p>
-              <p>Feedback: {question.feedback}</p>
-            </div>
-          ))}
+          <p>
+            Percentage: {calculatePercentage(scores, totalQuestions).toFixed(2)}
+            %
+          </p>
+          <p>
+            Answered {scores / 10} out of {totalQuestions} questions correctly.
+          </p>
         </section>
         <section className="results-actions">
           <button onClick={() => navigate('/home')}>Back to Home</button>
-          <button onClick={() => navigate(`/quiz/${quizId}`)}>
+          <button onClick={() => navigate('/quiz/:category')}>
             Retake Quiz
           </button>
           <button>Share Results</button>
