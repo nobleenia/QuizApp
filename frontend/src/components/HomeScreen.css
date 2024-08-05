@@ -170,6 +170,10 @@
 }
 
 /* Completed Quiz Item styles */
+.completed-quizzes-section {
+  margin-top: 2rem;
+}
+
 .completed-quiz-item {
   border: 1px solid #ddd;
   border-radius: 8px;
@@ -186,6 +190,7 @@
 
 .completed-quizzes {
   display: grid;
+  flex-wrap: wrap;
   grid-template-columns: repeat(4, 1fr);
   gap: 1rem;
 }
@@ -221,6 +226,14 @@
 }
 
 .view-results {
+  background-color: #07610a;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
   cursor: pointer;
   border-radius: 10px;
+}
+
+.view-results:hover {
+  background-color: #06560a;
 }

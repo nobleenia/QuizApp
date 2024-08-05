@@ -91,9 +91,26 @@ const QuizScreen = () => {
 
   const handleQuizCompletion = () => {
     markSessionAsCompleted();
+    saveQuizResult();
     navigate(`/results/${quizId}`, {
       state: { scores, totalQuestions: questions.length },
     });
+  };
+
+  const saveQuizResult = () => {
+    const quizResult = {
+      id: quizId,
+      title: `Quiz ${quizId}`, // Replace with actual title if available
+      category,
+      subcategory: questions[0]?.question.category, // Assuming all questions have the same category
+      score: scores,
+      total: questions.length * 10,
+    };
+
+    const completedQuizzes =
+      JSON.parse(localStorage.getItem('completedQuizzes')) || [];
+    completedQuizzes.push(quizResult);
+    localStorage.setItem('completedQuizzes', JSON.stringify(completedQuizzes));
   };
 
   const markSessionAsCompleted = () => {

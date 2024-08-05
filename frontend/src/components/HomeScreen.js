@@ -13,6 +13,7 @@ const HomeScreen = () => {
   const [showMoreCategories, setShowMoreCategories] = useState(false);
   const [showMoreTrending, setShowMoreTrending] = useState(false);
   const [trending, setTrending] = useState([]);
+  const [completedQuizzes, setCompletedQuizzes] = useState([]);
   const [showMoreQuizzes, setShowMoreQuizzes] = useState(false);
   const [invitePopupVisible, setInvitePopupVisible] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false); // State for logout confirmation modal
@@ -36,7 +37,14 @@ const HomeScreen = () => {
     };
 
     fetchCategories();
+    fetchCompletedQuizzes();
   }, []);
+
+  const fetchCompletedQuizzes = () => {
+    const completedQuizzes =
+      JSON.parse(localStorage.getItem('completedQuizzes')) || [];
+    setCompletedQuizzes(completedQuizzes);
+  };
 
   const categorize = (categories, categoryGroups) => {
     const groupedCategories = {};
@@ -169,24 +177,36 @@ const HomeScreen = () => {
         </div>
         <div className="completed-quizzes-section">
           <h3>My Quizzes</h3>
-          {/* completedQuizzes
-            .slice(0, showMoreQuizzes ? completedQuizzes.length : 4)
-            .map((quiz) => (
-              <div key={quiz.id} className="completed-quiz-item">
-                <p>{quiz.title}</p>
-                <p>{quiz.category}</p>
-                <p>{quiz.subcategory}</p>
-                <p>
-                  Score: {quiz.score}/{quiz.total}
-                </p>
-                <button
-                  onClick={() => navigate(`/results/${quiz.id}`)}
-                  className="view-results"
-                >
-                  View Results
-                </button>
-              </div>
-            ))*/}
+          <div className="completed-quizzes">
+            {completedQuizzes
+              .slice(0, showMoreQuizzes ? completedQuizzes.length : 4)
+              .map((quiz) => (
+                <div key={quiz.id} className="completed-quiz-item">
+                  <p>{quiz.title}</p>
+                  <p>{quiz.category}</p>
+                  <p>{quiz.subcategory}</p>
+                  <p>
+                    Score: {quiz.score}/{quiz.total}
+                  </p>
+                  <button
+                    onClick={() =>
+                      navigate(`/results/${quiz.id}`, { state: quiz })
+                    }
+                    className="view-results"
+                  >
+                    View Results
+                  </button>
+                </div>
+              ))}
+          </div>
+          {completedQuizzes.length > 4 && (
+            <button
+              onClick={() => setShowMoreQuizzes(!showMoreQuizzes)}
+              className="show-more"
+            >
+              {showMoreQuizzes ? 'Show Less' : 'Show More'}
+            </button>
+          )}
         </div>
       </main>
       <div className="invite-section">

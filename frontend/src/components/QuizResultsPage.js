@@ -8,7 +8,8 @@ const QuizResultsPage = () => {
   const { quizId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const { scores, totalQuestions } = location.state || {}; // Get scores and totalQuestions from the state
+  const { scores, totalQuestions, title, category, subcategory } =
+    location.state || {}; // Get scores and totalQuestions from the state
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   if (scores === undefined || totalQuestions === undefined) {
@@ -46,6 +47,7 @@ const QuizResultsPage = () => {
       </header>
       <main className="results-main">
         <section className="score-summary">
+          <h2>{title}</h2>
           <h2>Your Score</h2>
           <p>
             {scores} / {totalQuestions * 10}
@@ -60,7 +62,7 @@ const QuizResultsPage = () => {
         </section>
         <section className="results-actions">
           <button onClick={() => navigate('/home')}>Back to Home</button>
-          <button onClick={() => navigate('/quiz/:category')}>
+          <button onClick={() => navigate(`/quiz/${category}`)}>
             Retake Quiz
           </button>
           <button>Share Results</button>
