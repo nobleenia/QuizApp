@@ -19,14 +19,38 @@ const Login = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Add logic to handle login form submission
-    // For now, we're just navigating based on the role
-    if (formData.role === 'admin') {
-      navigate('/admin-dashboard');
-    } else {
-      navigate('/home');
+
+    try {
+      const response = await fetch('http://localhost:5000/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        // Store JWT token in localStorage
+        localStorage.setItem('token', data.token);
+
+        // Navigate based on the role
+        if (formData.role === 'admin') {
+          navigate('/admin-dashboard');
+        } else {
+          navigate('/home');
+        }
+      } else {
+        // Handle error
+        alert(data?.message || 'Login failed');
+      }
+    } catch (error) {
+      console.error('Error during login:', error);
     }
   };
 

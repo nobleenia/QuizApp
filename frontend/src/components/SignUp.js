@@ -42,6 +42,8 @@ const SignUp = () => {
 
       const data = await response.json();
       if (response.ok) {
+        // Store JWT token in localStorage
+        localStorage.setItem('token', data.token);
         // Handle success
         navigate('/home');
       } else {

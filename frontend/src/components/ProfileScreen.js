@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './ProfileScreen.css';
 import userImage from '../assets/userImage.jpg';
 import badgeIcon from '../assets/badgeIcon.png';
 import Footer from './Footer';
 import { FiArrowLeft, FiSettings, FiEdit, FiBell, FiX } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
+import { saveUserData, loadUserData, updateProfileImage } from '../utils/api';
 
 const ProfileScreen = () => {
   const [points, setPoints] = useState(0); // Default points for new users
@@ -18,6 +19,31 @@ const ProfileScreen = () => {
 
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await loadUserData();
+        if (data) {
+          setPoints(data.data?.points || 0);
+          setLevel(data.data?.level || 0);
+          setAchievements(data.data?.achievements || []);
+          setFriends(data.data?.friends || []);
+          setProfileImage(data.profileImage || userImage);
+        }
+      } catch (error) {
+        console.error('Error loading user data:', error);
+        if (error.message === 'No data found') {
+          console.log('No user data found');
+        } else {
+          console.log('Unauthorized access - redirecting to login');
+          navigate('/login');
+        }
+      }
+    };
+
+    fetchData();
+  }, [navigate]);
+
   const handleSettingsClick = () => {
     setShowSettings(true);
   };
@@ -26,11 +52,19 @@ const ProfileScreen = () => {
     setShowSettings(false);
   };
 
-  const handleProfileImageChange = (event) => {
+  const handleProfileImageChange = async (event) => {
     if (event.target.files && event.target.files[0]) {
       const reader = new FileReader();
-      reader.onload = (e) => {
-        setProfileImage(e.target.result);
+      reader.onload = async (e) => {
+        const newProfileImage = e.target.result;
+        setProfileImage(newProfileImage);
+
+        try {
+          await updateProfileImage(newProfileImage);
+          console.log('Profile image updated successfully');
+        } catch (error) {
+          console.error('Error updating profile image:', error);
+        }
       };
       reader.readAsDataURL(event.target.files[0]);
     }
@@ -55,6 +89,21 @@ const ProfileScreen = () => {
 
   const handleAnalysisLink = () => {
     navigate('/quiz-analysis');
+  };
+
+  const handleSaveData = async () => {
+    const data = {
+      points,
+      level,
+      achievements,
+      friends,
+    };
+    try {
+      await saveUserData(data, profileImage);
+      console.log('User data saved successfully');
+    } catch (error) {
+      console.error('Error saving user data:', error);
+    }
   };
 
   return (
@@ -199,7 +248,9 @@ const ProfileScreen = () => {
               Logout
             </p>
             <div className="settings-save-button-container">
-              <button className="settings-save-button">Save</button>
+              <button className="settings-save-button" onClick={handleSaveData}>
+                Save
+              </button>
             </div>
           </div>
         </div>
