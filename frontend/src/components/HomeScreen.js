@@ -6,8 +6,10 @@ import { useNavigate } from 'react-router-dom';
 import { FiBell } from 'react-icons/fi';
 import axios from 'axios';
 import categoryGroups from '../config/categoryGroups';
+import { loadUserData } from '../utils/api'; // Import the loadUserData function
 
 const HomeScreen = () => {
+  const [username, setUsername] = useState(''); // Add state for username
   const [categories, setCategories] = useState([]);
   const [groupedCategories, setGroupedCategories] = useState({});
   const [showMoreCategories, setShowMoreCategories] = useState(false);
@@ -36,9 +38,27 @@ const HomeScreen = () => {
       }
     };
 
+    const fetchUserData = async () => {
+      try {
+        const data = await loadUserData();
+        if (data) {
+          setUsername(data.userId.username || ''); // Set the username
+        }
+      } catch (error) {
+        console.error('Error loading user data:', error);
+        if (error.message === 'No data found') {
+          console.log('No user data found');
+        } else {
+          console.log('Unauthorized access - redirecting to login');
+          navigate('/login');
+        }
+      }
+    };
+
     fetchCategories();
     fetchCompletedQuizzes();
-  }, []);
+    fetchUserData(); // Fetch user data including username
+  }, [navigate]);
 
   const fetchCompletedQuizzes = () => {
     const completedQuizzes =
@@ -114,7 +134,7 @@ const HomeScreen = () => {
       <main className="home-main">
         <div className="header-section">
           <div className="welcome-section">
-            <h2>Welcome, Username</h2>
+            <h2>Welcome, {username}</h2> {/* Display the username */}
           </div>
           <div className="search-section">
             <input type="text" placeholder="Search" className="search-input" />

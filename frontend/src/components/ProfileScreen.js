@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { saveUserData, loadUserData, updateProfileImage } from '../utils/api';
 
 const ProfileScreen = () => {
+  const [username, setUsername] = useState(''); // Add state for username
   const [points, setPoints] = useState(0); // Default points for new users
   const [level, setLevel] = useState(0); // Default level for new users
   const [achievements, setAchievements] = useState([]); // List of user achievements
@@ -24,6 +25,7 @@ const ProfileScreen = () => {
       try {
         const data = await loadUserData();
         if (data) {
+          setUsername(data.userId.username || ''); // Set the username
           setPoints(data.data?.points || 0);
           setLevel(data.data?.level || 0);
           setAchievements(data.data?.achievements || []);
@@ -151,7 +153,8 @@ const ProfileScreen = () => {
               />
             </div>
             <div className="profile-details">
-              <h2 className="user-name">Username</h2>
+              <h2 className="user-name">{username}</h2>{' '}
+              {/* Display the username */}
               <p className="user-points">
                 <i>{points} Points</i>
               </p>

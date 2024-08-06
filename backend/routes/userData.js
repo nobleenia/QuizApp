@@ -1,5 +1,6 @@
 const express = require('express');
 const UserData = require('../models/UserData');
+const User = require('../models/User');
 const { verifyToken } = require('../middleware/authMiddleware');
 
 const router = express.Router();
@@ -33,7 +34,7 @@ router.get('/load', async (req, res) => {
   const { userId } = req.user;
 
   try {
-    const userData = await UserData.findOne({ userId });
+    const userData = await UserData.findOne({ userId }).populate('userId', 'username');
     if (!userData) {
       return res.status(404).json({ message: 'No data found' });
     }
