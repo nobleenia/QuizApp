@@ -6,10 +6,10 @@ import { useNavigate } from 'react-router-dom';
 import { FiBell } from 'react-icons/fi';
 import axios from 'axios';
 import categoryGroups from '../config/categoryGroups';
-import { loadUserData, loadCompletedQuizzes } from '../utils/api'; // Import the loadCompletedQuizzes function
+import { loadUserData, loadCompletedQuizzes } from '../utils/api';
 
 const HomeScreen = () => {
-  const [username, setUsername] = useState(''); // Add state for username
+  const [username, setUsername] = useState('');
   const [categories, setCategories] = useState([]);
   const [groupedCategories, setGroupedCategories] = useState({});
   const [showMoreCategories, setShowMoreCategories] = useState(false);
@@ -18,7 +18,7 @@ const HomeScreen = () => {
   const [completedQuizzes, setCompletedQuizzes] = useState([]);
   const [showMoreQuizzes, setShowMoreQuizzes] = useState(false);
   const [invitePopupVisible, setInvitePopupVisible] = useState(false);
-  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false); // State for logout confirmation modal
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -42,7 +42,7 @@ const HomeScreen = () => {
       try {
         const data = await loadUserData();
         if (data) {
-          setUsername(data.userId.username || ''); // Set the username
+          setUsername(data.userId.username || '');
         }
       } catch (error) {
         console.error('Error loading user data:', error);
@@ -57,22 +57,21 @@ const HomeScreen = () => {
 
     const fetchCompletedQuizzes = async () => {
       try {
-        const completedQuizzes = await loadCompletedQuizzes();
-        setCompletedQuizzes(completedQuizzes);
+        const data = await loadCompletedQuizzes();
+        setCompletedQuizzes(data);
       } catch (error) {
         console.error('Failed to fetch completed quizzes:', error);
       }
     };
 
     fetchCategories();
+    fetchUserData();
     fetchCompletedQuizzes();
-    fetchUserData(); // Fetch user data including username
   }, [navigate]);
 
   const categorize = (categories, categoryGroups) => {
     const groupedCategories = {};
 
-    // Initialize the groupedCategories with empty arrays
     Object.keys(categoryGroups).forEach((group) => {
       groupedCategories[group] = [];
     });
@@ -105,7 +104,7 @@ const HomeScreen = () => {
 
   const handleConfirmLogout = () => {
     setShowLogoutConfirm(false);
-    navigate('/'); // Navigate to the LandingPage
+    navigate('/');
   };
 
   const handleCancelLogout = () => {
@@ -137,7 +136,7 @@ const HomeScreen = () => {
       <main className="home-main">
         <div className="header-section">
           <div className="welcome-section">
-            <h2>Welcome, {username}</h2> {/* Display the username */}
+            <h2>Welcome, {username}</h2>
           </div>
           <div className="search-section">
             <input type="text" placeholder="Search" className="search-input" />
@@ -151,12 +150,12 @@ const HomeScreen = () => {
                 0,
                 showMoreCategories ? Object.keys(groupedCategories).length : 12,
               )
-              .map(([group, categories], index) => {
+              .map(([group, categories]) => {
                 const GroupIcon = categoryGroups[group]?.Icon;
                 return (
                   <div
                     className="group-item"
-                    key={index}
+                    key={`group-${group}`}
                     onClick={() => handleGroupClick(group)}
                   >
                     {GroupIcon && <GroupIcon className="group-icon" />}
@@ -182,7 +181,7 @@ const HomeScreen = () => {
               .map((category, index) => (
                 <div
                   className="category"
-                  key={index}
+                  key={`trending-${index}`}
                   onClick={() => navigate(`/quiz/${category}`)}
                 >
                   <p>{category}</p>

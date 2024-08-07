@@ -19,6 +19,8 @@ const QuizScreen = () => {
   const [selectedOption, setSelectedOption] = useState(null);
   const [timeRemaining, setTimeRemaining] = useState(30); // 30 seconds per question
   const [scores, setScores] = useState(0); // Score state
+  const [loading, setLoading] = useState(true); // Loading state
+  const [error, setError] = useState(null); // Error state
   const navigate = useNavigate();
 
   const shuffleArray = (array) => {
@@ -43,26 +45,28 @@ const QuizScreen = () => {
         };
       });
       setQuestions(shuffledQuestions);
-    }
-  }, [questionsFromLocation]);
-
-  useEffect(() => {
-    const fetchState = async () => {
-      try {
-        const storedState = await loadQuizState(quizId);
-        if (storedState) {
-          setCurrentQuestionIndex(storedState.currentQuestionIndex);
-          setTimeRemaining(storedState.timeRemaining);
-          setScores(storedState.scores);
-          setQuestions(storedState.questions);
+      setLoading(false); // Set loading to false after setting questions
+    } else {
+      const fetchState = async () => {
+        try {
+          const storedState = await loadQuizState(quizId);
+          if (storedState) {
+            setCurrentQuestionIndex(storedState.currentQuestionIndex);
+            setTimeRemaining(storedState.timeRemaining);
+            setScores(storedState.scores);
+            setQuestions(storedState.questions);
+          }
+        } catch (error) {
+          console.error('Failed to load quiz state:', error);
+          setError('Failed to load quiz state'); // Set error state
+        } finally {
+          setLoading(false); // Ensure loading is set to false regardless of outcome
         }
-      } catch (error) {
-        console.error('Failed to load quiz state:', error);
-      }
-    };
+      };
 
-    fetchState();
-  }, [quizId]);
+      fetchState();
+    }
+  }, [quizId, questionsFromLocation]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -116,7 +120,7 @@ const QuizScreen = () => {
       quizId,
       title: `Quiz ${quizId}`, // Replace with actual title if available
       category,
-      subcategory: questions[0]?.question.category, // Assuming all questions have the same category
+      subcategory: questions[0]?.subcategory || 'General', // Use a default value if subcategory is not available
       score: scores,
       total: questions.length * 10,
     };
@@ -167,8 +171,12 @@ const QuizScreen = () => {
     return selectedOption === index ? 'selected' : '';
   };
 
-  if (questions.length === 0) {
+  if (loading) {
     return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
   }
 
   return (

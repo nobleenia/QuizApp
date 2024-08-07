@@ -77,6 +77,11 @@ export const loadQuizState = async (quizId) => {
       'x-auth-token': token,
     },
   });
+
+  if (!response.ok) {
+    throw new Error('Failed to load quiz state');
+  }
+
   return response.json();
 };
 

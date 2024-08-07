@@ -3,6 +3,7 @@ const axios = require('axios');
 const router = express.Router();
 const QuizResult = require('../models/QuizResult');
 const QuizState = require('../models/QuizState');
+const User = require('../models/User'); // Add this line to import the User model
 const { verifyToken } = require('../middleware/authMiddleware');
 
 // Endpoint to fetch all quiz categories
@@ -41,7 +42,10 @@ router.get('/create-sessions/:subcategory', async (req, res) => {
       const response = await axios.get(
         `https://the-trivia-api.com/v2/questions?tags=${subcategory}&limit=10`,
       );
-      const questions = response.data;
+      const questions = response.data.map((question) => ({
+        ...question,
+        subcategory, // Ensure subcategory is added to each question
+      }));
       const sessionId = `dummy-session-id-${i + 1}`; // Generate unique session IDs
       sessions.push({ sessionId, questions });
     }
@@ -74,8 +78,14 @@ router.post('/save-result', async (req, res) => {
     });
 
     await quizResult.save();
+    // Update the user's points
+    const user = await User.findById(userId);
+    user.points = (user.points || 0) + score;
+    await user.save();
+
     res.status(200).json(quizResult);
   } catch (err) {
+    console.error('Failed to save quiz result:', err);
     res.status(500).json({ message: 'Server error' });
   }
 });
@@ -112,7 +122,7 @@ router.post('/save-state', async (req, res) => {
 });
 
 // Retrieve quiz state
-router.get('/load-state/:quizId', async (req, res) => {
+router.get('/load-state/:quizId', verifyToken, async (req, res) => {
   const { userId } = req.user;
   const { quizId } = req.params;
 
@@ -124,6 +134,7 @@ router.get('/load-state/:quizId', async (req, res) => {
 
     res.status(200).json(quizState);
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: 'Server error' });
   }
 });

@@ -6,31 +6,41 @@ import Footer from './Footer';
 import { FiArrowLeft, FiSettings, FiEdit, FiBell, FiX } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import { saveUserData, loadUserData, updateProfileImage } from '../utils/api';
+import { loadCompletedQuizzes } from '../utils/api'; // Add this import
 
 const ProfileScreen = () => {
-  const [username, setUsername] = useState(''); // Add state for username
-  const [points, setPoints] = useState(0); // Default points for new users
-  const [level, setLevel] = useState(0); // Default level for new users
-  const [achievements, setAchievements] = useState([]); // List of user achievements
-  const [friends, setFriends] = useState([]); // List of user friends
+  const [username, setUsername] = useState('');
+  const [points, setPoints] = useState(0);
+  const [level, setLevel] = useState(0);
+  const [achievements, setAchievements] = useState([]);
+  const [friends, setFriends] = useState([]);
   const [showSettings, setShowSettings] = useState(false);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [profileImage, setProfileImage] = useState(userImage);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
-
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await loadUserData();
-        if (data) {
-          setUsername(data.userId.username || ''); // Set the username
-          setPoints(data.data?.points || 0);
-          setLevel(data.data?.level || 0);
-          setAchievements(data.data?.achievements || []);
-          setFriends(data.data?.friends || []);
-          setProfileImage(data.profileImage || userImage);
+        const userData = await loadUserData();
+        const completedQuizzes = await loadCompletedQuizzes();
+
+        if (userData) {
+          setUsername(userData.userId.username || '');
+          setProfileImage(userData.profileImage || userImage);
+          setPoints(userData.data?.points || 0);
+          setLevel(userData.data?.level || 0);
+          setAchievements(userData.data?.achievements || []);
+          setFriends(userData.data?.friends || []);
+        }
+
+        if (completedQuizzes) {
+          const totalPoints = completedQuizzes.reduce(
+            (acc, quiz) => acc + quiz.score,
+            0,
+          );
+          setPoints(totalPoints);
         }
       } catch (error) {
         console.error('Error loading user data:', error);
@@ -82,7 +92,7 @@ const ProfileScreen = () => {
 
   const handleConfirmLogout = () => {
     setShowLogoutConfirm(false);
-    navigate('/'); // Navigate to the LandingPage
+    navigate('/');
   };
 
   const handleCancelLogout = () => {
@@ -153,8 +163,7 @@ const ProfileScreen = () => {
               />
             </div>
             <div className="profile-details">
-              <h2 className="user-name">{username}</h2>{' '}
-              {/* Display the username */}
+              <h2 className="user-name">{username}</h2>
               <p className="user-points">
                 <i>{points} Points</i>
               </p>
@@ -236,7 +245,9 @@ const ProfileScreen = () => {
               <p>Notifications</p>
               <div className="toggle-switch" onClick={toggleNotifications}>
                 <div
-                  className={`toggle-slider ${notificationsEnabled ? 'on' : 'off'}`}
+                  className={`toggle-slider ${
+                    notificationsEnabled ? 'on' : 'off'
+                  }`}
                 ></div>
               </div>
             </div>

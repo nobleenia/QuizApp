@@ -1,6 +1,7 @@
 const express = require('express');
 const UserData = require('../models/UserData');
 const User = require('../models/User');
+const QuizResult = require('../models/QuizResult');
 const { verifyToken } = require('../middleware/authMiddleware');
 
 const router = express.Router();
@@ -43,6 +44,36 @@ router.get('/load', async (req, res) => {
     }
 
     res.status(200).json(userData);
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Retrieve Quiz Points
+router.get('/user-data', async (req, res) => {
+  const { userId } = req.user;
+
+  try {
+    const userData = await UserData.findOne({ userId });
+    const quizResults = await QuizResult.find({ userId });
+
+    let totalPoints = 0;
+    quizResults.forEach((result) => {
+      totalPoints += result.score;
+    });
+
+    let level = Math.floor(totalPoints / 1000);
+
+    res.status(200).json({
+      userId: userData.userId,
+      username: userData.username,
+      data: {
+        ...userData.data,
+        points: totalPoints,
+        level: level,
+      },
+      profileImage: userData.profileImage,
+    });
   } catch (err) {
     res.status(500).json({ message: 'Server error' });
   }
