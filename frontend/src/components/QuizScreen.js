@@ -3,6 +3,12 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import './QuizScreen.css';
 import userImage from '../assets/userImage.jpg';
 import Footer from './Footer';
+import {
+  saveQuizState,
+  loadQuizState,
+  saveQuizResult,
+  loadCompletedQuizzes,
+} from '../utils/api';
 
 const QuizScreen = () => {
   const { category, quizId } = useParams();
@@ -41,13 +47,21 @@ const QuizScreen = () => {
   }, [questionsFromLocation]);
 
   useEffect(() => {
-    const storedState = JSON.parse(localStorage.getItem('quizState'));
-    if (storedState && storedState.quizId === quizId) {
-      setCurrentQuestionIndex(storedState.currentQuestionIndex);
-      setTimeRemaining(storedState.timeRemaining);
-      setScores(storedState.scores);
-      setQuestions(storedState.questions);
-    }
+    const fetchState = async () => {
+      try {
+        const storedState = await loadQuizState(quizId);
+        if (storedState) {
+          setCurrentQuestionIndex(storedState.currentQuestionIndex);
+          setTimeRemaining(storedState.timeRemaining);
+          setScores(storedState.scores);
+          setQuestions(storedState.questions);
+        }
+      } catch (error) {
+        console.error('Failed to load quiz state:', error);
+      }
+    };
+
+    fetchState();
   }, [quizId]);
 
   useEffect(() => {
@@ -91,15 +105,15 @@ const QuizScreen = () => {
 
   const handleQuizCompletion = () => {
     markSessionAsCompleted();
-    saveQuizResult();
+    saveQuizResultToDB();
     navigate(`/results/${quizId}`, {
       state: { scores, totalQuestions: questions.length },
     });
   };
 
-  const saveQuizResult = () => {
+  const saveQuizResultToDB = async () => {
     const quizResult = {
-      id: quizId,
+      quizId,
       title: `Quiz ${quizId}`, // Replace with actual title if available
       category,
       subcategory: questions[0]?.question.category, // Assuming all questions have the same category
@@ -107,26 +121,20 @@ const QuizScreen = () => {
       total: questions.length * 10,
     };
 
-    const completedQuizzes =
-      JSON.parse(localStorage.getItem('completedQuizzes')) || [];
-    completedQuizzes.push(quizResult);
-    localStorage.setItem('completedQuizzes', JSON.stringify(completedQuizzes));
+    try {
+      await saveQuizResult(quizResult);
+      console.log('Quiz result saved successfully');
+    } catch (error) {
+      console.error('Failed to save quiz result:', error);
+    }
   };
 
   const markSessionAsCompleted = () => {
     const sessionId = parseInt(quizId.split('-').pop(), 10);
-    const completedSessions =
-      JSON.parse(localStorage.getItem('completedSessions')) || [];
-    if (!completedSessions.includes(sessionId)) {
-      completedSessions.push(sessionId);
-      localStorage.setItem(
-        'completedSessions',
-        JSON.stringify(completedSessions),
-      );
-    }
+    // Save session completion in the database if necessary
   };
 
-  const saveQuizState = () => {
+  const saveQuizStateToDB = async () => {
     const quizState = {
       quizId,
       currentQuestionIndex,
@@ -134,11 +142,17 @@ const QuizScreen = () => {
       scores,
       questions,
     };
-    localStorage.setItem('quizState', JSON.stringify(quizState));
+
+    try {
+      await saveQuizState(quizState);
+      console.log('Quiz state saved successfully');
+    } catch (error) {
+      console.error('Failed to save quiz state:', error);
+    }
   };
 
   const handleLogoutClick = () => {
-    saveQuizState();
+    saveQuizStateToDB();
     navigate('/login');
   };
 

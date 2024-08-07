@@ -34,7 +34,10 @@ router.get('/load', async (req, res) => {
   const { userId } = req.user;
 
   try {
-    const userData = await UserData.findOne({ userId }).populate('userId', 'username');
+    const userData = await UserData.findOne({ userId }).populate(
+      'userId',
+      'username',
+    );
     if (!userData) {
       return res.status(404).json({ message: 'No data found' });
     }

@@ -5,12 +5,14 @@ import userImage from '../assets/userImage.jpg';
 import Footer from './Footer';
 import axios from 'axios';
 import categoryGroups from '../config/categoryGroups';
+import { loadCompletedSessions } from '../utils/api'; // Import the loadCompletedSessions function
 
 const QuizSelectionScreen = () => {
   const { category } = useParams(); // Get the category from the URL parameters
   const [subcategories, setSubcategories] = useState([]);
   const [selectedSubcategory, setSelectedSubcategory] = useState('');
   const [sessions, setSessions] = useState([]);
+  const [completedSessions, setCompletedSessions] = useState([]); // State for completed sessions
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const navigate = useNavigate();
 
@@ -55,6 +57,19 @@ const QuizSelectionScreen = () => {
     }
   }, [selectedSubcategory]);
 
+  useEffect(() => {
+    const fetchCompletedSessions = async () => {
+      try {
+        const completedSessions = await loadCompletedSessions();
+        setCompletedSessions(completedSessions);
+      } catch (error) {
+        console.error('Failed to fetch completed sessions:', error);
+      }
+    };
+
+    fetchCompletedSessions(); // Fetch completed sessions from the database
+  }, []);
+
   const handleLogoutClick = () => {
     setShowLogoutConfirm(true);
   };
@@ -83,9 +98,13 @@ const QuizSelectionScreen = () => {
   };
 
   const isSessionAccessible = (index) => {
-    const completedSessions =
-      JSON.parse(localStorage.getItem('completedSessions')) || [];
-    return index === 0 || completedSessions.includes(index - 1);
+    // Check if the session is accessible based on completed sessions fetched from the database
+    return (
+      index === 0 ||
+      completedSessions.some(
+        (session) => session.quizId === `dummy-session-id-${index}`,
+      )
+    );
   };
 
   return (

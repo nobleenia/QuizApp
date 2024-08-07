@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { FiBell } from 'react-icons/fi';
 import axios from 'axios';
 import categoryGroups from '../config/categoryGroups';
-import { loadUserData } from '../utils/api'; // Import the loadUserData function
+import { loadUserData, loadCompletedQuizzes } from '../utils/api'; // Import the loadCompletedQuizzes function
 
 const HomeScreen = () => {
   const [username, setUsername] = useState(''); // Add state for username
@@ -55,16 +55,19 @@ const HomeScreen = () => {
       }
     };
 
+    const fetchCompletedQuizzes = async () => {
+      try {
+        const completedQuizzes = await loadCompletedQuizzes();
+        setCompletedQuizzes(completedQuizzes);
+      } catch (error) {
+        console.error('Failed to fetch completed quizzes:', error);
+      }
+    };
+
     fetchCategories();
     fetchCompletedQuizzes();
     fetchUserData(); // Fetch user data including username
   }, [navigate]);
-
-  const fetchCompletedQuizzes = () => {
-    const completedQuizzes =
-      JSON.parse(localStorage.getItem('completedQuizzes')) || [];
-    setCompletedQuizzes(completedQuizzes);
-  };
 
   const categorize = (categories, categoryGroups) => {
     const groupedCategories = {};

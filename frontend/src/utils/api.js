@@ -42,3 +42,62 @@ export const updateProfileImage = async (profileImage) => {
   });
   return response.json();
 };
+
+export const saveQuizResult = async (quizResult) => {
+  const token = getToken();
+  const response = await fetch(`${API_URL}/quiz/save-result`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-auth-token': token,
+    },
+    body: JSON.stringify(quizResult),
+  });
+  return response.json();
+};
+
+export const saveQuizState = async (quizState) => {
+  const token = getToken();
+  const response = await fetch(`${API_URL}/quiz/save-state`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-auth-token': token,
+    },
+    body: JSON.stringify(quizState),
+  });
+  return response.json();
+};
+
+export const loadQuizState = async (quizId) => {
+  const token = getToken();
+  const response = await fetch(`${API_URL}/quiz/load-state/${quizId}`, {
+    method: 'GET',
+    headers: {
+      'x-auth-token': token,
+    },
+  });
+  return response.json();
+};
+
+export const loadCompletedSessions = async () => {
+  const token = getToken();
+  const response = await fetch(`${API_URL}/quiz/completed-sessions`, {
+    method: 'GET',
+    headers: {
+      'x-auth-token': token,
+    },
+  });
+  return response.json();
+};
+
+export const loadCompletedQuizzes = async () => {
+  const token = getToken();
+  const response = await fetch(`${API_URL}/quiz/completed-quizzes`, {
+    method: 'GET',
+    headers: {
+      'x-auth-token': token,
+    },
+  });
+  return response.json();
+};
