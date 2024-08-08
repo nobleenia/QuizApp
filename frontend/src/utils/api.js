@@ -6,6 +6,20 @@ const getToken = () => {
   return token;
 };
 
+export const fetchUsers = async () => {
+  const token = getToken();
+  const response = await fetch(`${API_URL}/userData/users`, {
+    method: 'GET',
+    headers: {
+      'x-auth-token': token,
+    },
+  });
+  if (!response.ok) {
+    throw new Error('Failed to fetch users');
+  }
+  return response.json();
+};
+
 export const saveUserData = async (data, profileImage) => {
   const token = getToken();
   const response = await fetch(`${API_URL}/userData/save`, {
@@ -43,6 +57,9 @@ export const updateProfileImage = async (profileImage) => {
     },
     body: JSON.stringify({ profileImage }),
   });
+  if (!response.ok) {
+    throw new Error('Failed to update profile image');
+  }
   return response.json();
 };
 

@@ -154,4 +154,15 @@ router.post('/profile-image', async (req, res) => {
   }
 });
 
+// Endpoint to retrieve users
+router.get('/users', async (req, res) => {
+  try {
+    const users = await User.find().select('username profileImage status');
+    res.status(200).json(users);
+  } catch (err) {
+    console.error('Error retrieving users:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 module.exports = router;

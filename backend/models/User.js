@@ -33,6 +33,14 @@ const UserSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  profileImage: {
+    type: String,
+    default: 'path_to_default_image', // Replace with your default image path
+  },
+  status: {
+    type: String,
+    default: 'offline',
+  },
 });
 
 // Remove the pre-save hook for password hashing

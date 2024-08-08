@@ -1,7 +1,9 @@
+// frontend/src/components/FindFriendsPage.js
 import React, { useState, useEffect } from 'react';
 import './FindFriendsPage.css';
 import { useNavigate } from 'react-router-dom';
 import { FiBell, FiArrowLeft, FiSearch, FiPlusCircle } from 'react-icons/fi';
+import { fetchUsers } from '../utils/api'; // Import the fetchUsers function
 
 const FindFriendsPage = () => {
   const [users, setUsers] = useState([]);
@@ -14,78 +16,17 @@ const FindFriendsPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch users from your API or database
-    const fetchedUsers = [
-      {
-        id: 1,
-        username: 'User1',
-        profilePic: 'path_to_image',
-        status: 'online',
-      },
-      {
-        id: 2,
-        username: 'User2',
-        profilePic: 'path_to_image',
-        status: 'offline',
-      },
-      {
-        id: 3,
-        username: 'User2',
-        profilePic: 'path_to_image',
-        status: 'offline',
-      },
-      {
-        id: 4,
-        username: 'User2',
-        profilePic: 'path_to_image',
-        status: 'offline',
-      },
-      {
-        id: 5,
-        username: 'User2',
-        profilePic: 'path_to_image',
-        status: 'offline',
-      },
-      {
-        id: 6,
-        username: 'User2',
-        profilePic: 'path_to_image',
-        status: 'offline',
-      },
-      {
-        id: 7,
-        username: 'User2',
-        profilePic: 'path_to_image',
-        status: 'offline',
-      },
-      {
-        id: 8,
-        username: 'User2',
-        profilePic: 'path_to_image',
-        status: 'offline',
-      },
-      {
-        id: 9,
-        username: 'User2',
-        profilePic: 'path_to_image',
-        status: 'offline',
-      },
-      {
-        id: 10,
-        username: 'User2',
-        profilePic: 'path_to_image',
-        status: 'offline',
-      },
-      {
-        id: 11,
-        username: 'User2',
-        profilePic: 'path_to_image',
-        status: 'offline',
-      },
-      // Add more users here
-    ];
-    setUsers(fetchedUsers);
-    setFilteredUsers(fetchedUsers);
+    const fetchAndSetUsers = async () => {
+      try {
+        const fetchedUsers = await fetchUsers();
+        setUsers(fetchedUsers);
+        setFilteredUsers(fetchedUsers);
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
+    };
+
+    fetchAndSetUsers();
   }, []);
 
   const handleLogoutClick = () => {
@@ -167,9 +108,9 @@ const FindFriendsPage = () => {
         </div>
         <div className="users-list">
           {filteredUsers.slice(0, itemsPerPage).map((user) => (
-            <div key={user.id} className="user-card">
+            <div key={user._id} className="user-card">
               <img
-                src={user.profilePic}
+                src={user.profileImage}
                 alt={user.username}
                 className="profile-pic"
               />
