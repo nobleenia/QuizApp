@@ -21,6 +21,8 @@ import QuizResultsPage from './components/QuizResultsPage';
 import QuizAnalysisPage from './components/QuizAnalysisPage';
 import FindFriendsPage from './components/FindFriendsPage';
 import QuizCompletionScreen from './components/QuizCompletionScreen';
+import ChangeUsername from './components/ChangeUsername';
+import ChangePassword from './components/ChangePassword';
 import './App.css';
 
 const App = () => {
@@ -57,6 +59,8 @@ const App = () => {
                 path="/quiz-completion"
                 element={<QuizCompletionScreen />}
               />
+              <Route path="/change-username" element={<ChangeUsername />} />
+              <Route path="/change-password" element={<ChangePassword />} />
             </Routes>
             <FloatingIconWrapper />
           </>

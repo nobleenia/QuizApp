@@ -5,6 +5,7 @@
     justify-content: center;
     min-height: 100vh;
     background: linear-gradient(to bottom, #b3cab4, #f1f1f1);
+    position: relative;
   }
   
   .auth-header {
@@ -12,6 +13,8 @@
     flex-direction: column;
     align-items: center;
     margin: 2rem 0;
+    position: relative;
+    width: 100%;
   }
   
   .auth-logo {
@@ -23,6 +26,7 @@
     font-size: 2rem;
     font-weight: bold; 
     color: #4a4a4a;
+    margin-top: 0.5rem;
   }
   
   .auth-container {
@@ -115,3 +119,15 @@
     outline: none;
     border-color: #45a049;
   }
+
+  .back-button {
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #4caf50;
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    background: none;
+    border: none;
+    padding: 0;
+}

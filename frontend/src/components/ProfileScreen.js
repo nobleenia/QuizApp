@@ -123,7 +123,7 @@ const ProfileScreen = () => {
       <header className="profile-header">
         <FiArrowLeft
           className="back-button"
-          onClick={() => window.history.back()}
+          onClick={() => navigate('/home')}
         />
         <h1 className="profile-title">QuizApp</h1>
         <FiBell
@@ -239,8 +239,16 @@ const ProfileScreen = () => {
                 <span className="language-option">FR</span>
               </div>
             </div>
-            <p>Change Password</p>
-            <p>Change Username</p>
+            <div className="settings-item">
+              <p onClick={() => navigate('/change-password')}>
+                Change Password
+              </p>
+            </div>
+            <div className="settings-item">
+              <p onClick={() => navigate('/change-username')}>
+                Change Username
+              </p>
+            </div>
             <div className="settings-item">
               <p>Notifications</p>
               <div className="toggle-switch" onClick={toggleNotifications}>

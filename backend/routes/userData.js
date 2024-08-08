@@ -1,6 +1,7 @@
 const express = require('express');
-const UserData = require('../models/UserData');
+const bcrypt = require('bcryptjs');
 const User = require('../models/User');
+const UserData = require('../models/UserData');
 const QuizResult = require('../models/QuizResult');
 const { verifyToken } = require('../middleware/authMiddleware');
 
@@ -75,6 +76,80 @@ router.get('/user-data', async (req, res) => {
       profileImage: userData.profileImage,
     });
   } catch (err) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Endpoint to change password
+router.post('/change-password', async (req, res) => {
+  const { userId } = req.user;
+  const { currentPassword, newPassword } = req.body;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      console.log('User not found');
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      console.log('Incorrect current password');
+      return res.status(400).json({ message: 'Incorrect current password' });
+    }
+
+    // Ensure the new password is hashed correctly
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+    user.password = hashedPassword;
+    console.log('Password hashed during change:', hashedPassword); // Debugging line
+    await user.save();
+    console.log('Password updated successfully');
+
+    res.status(200).json({ message: 'Password updated successfully' });
+  } catch (err) {
+    console.error('Server error', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Endpoint to change username
+router.post('/change-username', async (req, res) => {
+  const { userId } = req.user;
+  const { newUsername } = req.body;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    user.username = newUsername;
+    await user.save();
+
+    res.status(200).json({ message: 'Username updated successfully' });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Route to update profile image
+router.post('/profile-image', async (req, res) => {
+  const { userId } = req.user;
+  const { profileImage } = req.body;
+
+  try {
+    const userData = await UserData.findOne({ userId });
+    if (!userData) {
+      return res.status(404).json({ message: 'User data not found' });
+    }
+
+    userData.profileImage = profileImage;
+    await userData.save();
+
+    res.status(200).json({ message: 'Profile image updated successfully' });
+  } catch (err) {
+    console.error('Server error', err);
     res.status(500).json({ message: 'Server error' });
   }
 });

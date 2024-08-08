@@ -48,6 +48,8 @@ const HomeScreen = () => {
         console.error('Error loading user data:', error);
         if (error.message === 'No data found') {
           console.log('No user data found');
+        } else if (error.message === 'Failed to load user data') {
+          console.log('No user data found');
         } else {
           console.log('Unauthorized access - redirecting to login');
           navigate('/login');

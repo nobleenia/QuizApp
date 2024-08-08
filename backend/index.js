@@ -10,7 +10,7 @@ const app = express();
 const port = process.env.PORT || 5000;
 const authRoutes = require('./routes/auth');
 const quizRoutes = require('./routes/quiz');
-const userDataRoutes = require('./routes/userData');
+const userDataRoutes = require('./routes/userData'); // Ensure this is correctly imported
 
 app.use(cors());
 app.use(express.json({ limit: '50mb' })); // Increase payload limit
@@ -18,7 +18,7 @@ app.use(bodyParser.json({ limit: '50mb' })); // Increase payload limit for body-
 
 app.use('/api/auth', authRoutes);
 app.use('/api/quiz', quizRoutes);
-app.use('/api/userData', userDataRoutes);
+app.use('/api/userData', userDataRoutes); // Ensure this is correctly used
 
 mongoose
   .connect(process.env.MONGO_URI, {

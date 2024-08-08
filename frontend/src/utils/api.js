@@ -27,6 +27,9 @@ export const loadUserData = async () => {
       'x-auth-token': token,
     },
   });
+  if (!response.ok) {
+    throw new Error('Failed to load user data');
+  }
   return response.json();
 };
 
@@ -104,5 +107,41 @@ export const loadCompletedQuizzes = async () => {
       'x-auth-token': token,
     },
   });
+  return response.json();
+};
+
+export const updatePassword = async (currentPassword, newPassword) => {
+  const token = getToken();
+  const response = await fetch(`${API_URL}/userData/change-password`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-auth-token': token,
+    },
+    body: JSON.stringify({ currentPassword, newPassword }),
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to update password');
+  }
+
+  return response.json();
+};
+
+export const updateUsername = async (newUsername) => {
+  const token = getToken();
+  const response = await fetch(`${API_URL}/userData/change-username`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-auth-token': token,
+    },
+    body: JSON.stringify({ newUsername }),
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to update username');
+  }
+
   return response.json();
 };
