@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Auth.css';
 import logo from '../assets/logo.png';
+import { FiArrowLeft } from 'react-icons/fi';
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -62,6 +63,10 @@ const SignUp = () => {
         <h1 className="auth-title">QuizApp</h1>
       </header>
       <div className="auth-container">
+        <FiArrowLeft
+          className="back-button"
+          onClick={() => window.history.back()}
+        />
         <h2>Sign Up</h2>
         <form onSubmit={handleSubmit}>
           <div className="auth-input">

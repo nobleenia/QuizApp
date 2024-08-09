@@ -110,7 +110,7 @@ const FindFriendsPage = () => {
           {filteredUsers.slice(0, itemsPerPage).map((user) => (
             <div key={user._id} className="user-card">
               <img
-                src={user.profileImage}
+                src={`http://localhost:5000${user.profileImage || '/public/userImage.jpg'}`}
                 alt={user.username}
                 className="profile-pic"
               />

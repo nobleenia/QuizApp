@@ -35,7 +35,7 @@ const UserSchema = new mongoose.Schema({
   },
   profileImage: {
     type: String,
-    default: 'path_to_default_image', // Replace with your default image path
+    default: '/public/userImage.jpg', // Default profile image path
   },
   status: {
     type: String,
