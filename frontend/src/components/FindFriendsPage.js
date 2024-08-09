@@ -1,9 +1,8 @@
-// frontend/src/components/FindFriendsPage.js
 import React, { useState, useEffect } from 'react';
 import './FindFriendsPage.css';
 import { useNavigate } from 'react-router-dom';
 import { FiBell, FiArrowLeft, FiSearch, FiPlusCircle } from 'react-icons/fi';
-import { fetchUsers } from '../utils/api'; // Import the fetchUsers function
+import { fetchUsers, sendFriendRequest } from '../utils/api'; // Import the fetchUsers and sendFriendRequest functions
 
 const FindFriendsPage = () => {
   const [users, setUsers] = useState([]);
@@ -12,6 +11,7 @@ const FindFriendsPage = () => {
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [confirmationVisible, setConfirmationVisible] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [sentRequests, setSentRequests] = useState([]); // Track sent friend requests
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const navigate = useNavigate();
 
@@ -59,10 +59,16 @@ const FindFriendsPage = () => {
     setConfirmationVisible(true);
   };
 
-  const handleSendRequest = () => {
-    // Logic to send a friend request
-    setConfirmationVisible(false);
-    alert(`Friend request sent to ${selectedUser.username}`);
+  const handleSendRequest = async () => {
+    try {
+      await sendFriendRequest(selectedUser._id);
+      setSentRequests([...sentRequests, selectedUser._id]);
+      setConfirmationVisible(false);
+      alert(`Friend request sent to ${selectedUser.username}`);
+    } catch (error) {
+      console.error('Error sending friend request:', error);
+      alert('Failed to send friend request.');
+    }
   };
 
   const handleCancelRequest = () => {
@@ -118,10 +124,14 @@ const FindFriendsPage = () => {
                 <p className="username">{user.username}</p>
                 <p className={`status ${user.status}`}>{user.status}</p>
               </div>
-              <FiPlusCircle
-                className="add-friend-button"
-                onClick={() => handleAddFriendClick(user)}
-              />
+              {sentRequests.includes(user._id) ? (
+                <p>Friend request sent</p>
+              ) : (
+                <FiPlusCircle
+                  className="add-friend-button"
+                  onClick={() => handleAddFriendClick(user)}
+                />
+              )}
             </div>
           ))}
         </div>

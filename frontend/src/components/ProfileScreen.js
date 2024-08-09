@@ -5,7 +5,13 @@ import badgeIcon from '../assets/badgeIcon.png';
 import Footer from './Footer';
 import { FiArrowLeft, FiSettings, FiEdit, FiBell, FiX } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
-import { saveUserData, loadUserData, updateProfileImage } from '../utils/api';
+import {
+  saveUserData,
+  loadUserData,
+  updateProfileImage,
+  acceptFriendRequest,
+  declineFriendRequest,
+} from '../utils/api';
 import { loadCompletedQuizzes } from '../utils/api'; // Add this import
 
 const ProfileScreen = () => {
@@ -18,21 +24,24 @@ const ProfileScreen = () => {
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [profileImage, setProfileImage] = useState(userImage);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [friendRequests, setFriendRequests] = useState([]); // Manage friend requests
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const userData = await loadUserData();
+        console.log('Fetched User Data:', userData); // Debugging line
         const completedQuizzes = await loadCompletedQuizzes();
 
         if (userData) {
-          setUsername(userData.userId.username || '');
+          setUsername(userData.username || '');
           setProfileImage(userData.profileImage || userImage);
-          setPoints(userData.data?.points || 0);
-          setLevel(userData.data?.level || 0);
-          setAchievements(userData.data?.achievements || []);
-          setFriends(userData.data?.friends || []);
+          setPoints(userData.points || 0);
+          setLevel(userData.level || 0);
+          setAchievements(userData.achievements || []);
+          setFriends(userData.friends || []);
+          setFriendRequests(userData.friendRequests || []);
         }
 
         if (completedQuizzes) {
@@ -115,6 +124,32 @@ const ProfileScreen = () => {
       console.log('User data saved successfully');
     } catch (error) {
       console.error('Error saving user data:', error);
+    }
+  };
+
+  const handleAcceptRequest = async (requestId) => {
+    try {
+      await acceptFriendRequest(requestId);
+      setFriendRequests((prevRequests) =>
+        prevRequests.filter((req) => req._id !== requestId),
+      );
+      alert('Friend request accepted.');
+    } catch (error) {
+      console.error('Error accepting friend request:', error);
+      alert('Failed to accept friend request.');
+    }
+  };
+
+  const handleDeclineRequest = async (requestId) => {
+    try {
+      await declineFriendRequest(requestId);
+      setFriendRequests((prevRequests) =>
+        prevRequests.filter((req) => req._id !== requestId),
+      );
+      alert('Friend request declined.');
+    } catch (error) {
+      console.error('Error declining friend request:', error);
+      alert('Failed to decline friend request.');
     }
   };
 
@@ -215,12 +250,18 @@ const ProfileScreen = () => {
         <div className="friend-requests-section">
           <h3>Friend Requests</h3>
           <div className="friend-requests-grid">
-            {friends.length === 0 ? (
-              <p>No friends requests.</p>
+            {friendRequests.length === 0 ? (
+              <p>No friend requests.</p>
             ) : (
-              friends.map((friend, index) => (
-                <div className="friend" key={index}>
-                  <p>{friend.name}</p>
+              friendRequests.map((request, index) => (
+                <div className="friend-request" key={index}>
+                  <p>{request.from.username}</p>
+                  <button onClick={() => handleAcceptRequest(request._id)}>
+                    Accept
+                  </button>
+                  <button onClick={() => handleDeclineRequest(request._id)}>
+                    Decline
+                  </button>
                 </div>
               ))
             )}

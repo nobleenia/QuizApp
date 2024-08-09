@@ -162,3 +162,48 @@ export const updateUsername = async (newUsername) => {
 
   return response.json();
 };
+
+// Add the sendFriendRequest function here
+export const sendFriendRequest = async (recipientId) => {
+  const token = getToken();
+  const response = await fetch(`${API_URL}/userData/send-friend-request`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-auth-token': token,
+    },
+    body: JSON.stringify({ recipientId }),
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to send friend request');
+  }
+
+  return response.json();
+};
+
+export const acceptFriendRequest = async (requestId) => {
+  const token = getToken();
+  const response = await fetch(`${API_URL}/userData/accept-friend-request`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-auth-token': token,
+    },
+    body: JSON.stringify({ requestId }),
+  });
+  return response.json();
+};
+
+export const declineFriendRequest = async (requestId) => {
+  const token = getToken();
+  const response = await fetch(`${API_URL}/userData/decline-friend-request`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-auth-token': token,
+    },
+    body: JSON.stringify({ requestId }),
+  });
+  return response.json();
+};

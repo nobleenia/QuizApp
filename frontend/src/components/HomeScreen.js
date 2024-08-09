@@ -42,7 +42,7 @@ const HomeScreen = () => {
       try {
         const data = await loadUserData();
         if (data) {
-          setUsername(data.userId.username || '');
+          setUsername(data.username || '');
         }
       } catch (error) {
         console.error('Error loading user data:', error);

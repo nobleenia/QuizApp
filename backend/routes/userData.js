@@ -32,20 +32,30 @@ router.post('/save', async (req, res) => {
 });
 
 // Retrieve user data
-router.get('/load', async (req, res) => {
+router.get('/load', verifyToken, async (req, res) => {
   const { userId } = req.user;
 
   try {
-    const userData = await UserData.findOne({ userId }).populate(
-      'userId',
-      'username',
-    );
-    if (!userData) {
-      return res.status(404).json({ message: 'No data found' });
+    const user = await User.findById(userId)
+      .populate('friendRequests.from', 'username profileImage') // Populate the `from` field in friendRequests
+      .populate('friends', 'username profileImage');
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
     }
 
-    res.status(200).json(userData);
+    res.status(200).json({
+      userId: user._id,
+      username: user.username,
+      profileImage: user.profileImage,
+      points: user.points,
+      level: Math.floor(user.points / 1000),
+      achievements: [], // Assuming you're handling achievements separately
+      friends: user.friends,
+      friendRequests: user.friendRequests,
+    });
   } catch (err) {
+    console.error('Error loading user data:', err);
     res.status(500).json({ message: 'Server error' });
   }
 });
@@ -139,13 +149,14 @@ router.post('/profile-image', async (req, res) => {
   const { profileImage } = req.body;
 
   try {
-    const userData = await UserData.findOne({ userId });
-    if (!userData) {
-      return res.status(404).json({ message: 'User data not found' });
+    // Update the User model
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
     }
 
-    userData.profileImage = profileImage;
-    await userData.save();
+    user.profileImage = profileImage;
+    await user.save();
 
     res.status(200).json({ message: 'Profile image updated successfully' });
   } catch (err) {
@@ -161,6 +172,40 @@ router.get('/users', async (req, res) => {
     res.status(200).json(users);
   } catch (err) {
     console.error('Error retrieving users:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Add the friend request to the receiver's friendRequests array
+router.post('/send-friend-request', async (req, res) => {
+  const { userId } = req.user; // Sender's ID
+  const { recipientId } = req.body; // Receiver's ID
+
+  try {
+    const sender = await User.findById(userId);
+    const receiver = await User.findById(recipientId);
+
+    if (!sender || !receiver) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Ensure the sender isn't sending a duplicate request
+    if (
+      receiver.friendRequests.some(
+        (request) => request.from.toString() === userId,
+      )
+    ) {
+      return res.status(400).json({ message: 'Friend request already sent' });
+    }
+
+    // Add the friend request to the receiver's friendRequests
+    receiver.friendRequests.push({ from: sender._id });
+
+    await receiver.save();
+
+    res.status(200).json({ message: 'Friend request sent' });
+  } catch (err) {
+    console.error('Error sending friend request:', err);
     res.status(500).json({ message: 'Server error' });
   }
 });
