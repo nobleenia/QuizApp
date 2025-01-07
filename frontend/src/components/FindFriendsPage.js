@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './FindFriendsPage.css';
 import { useNavigate } from 'react-router-dom';
 import { FiBell, FiArrowLeft, FiSearch, FiPlusCircle } from 'react-icons/fi';
-import { fetchUsers, sendFriendRequest } from '../utils/api'; // Import the fetchUsers and sendFriendRequest functions
+import { fetchUsers, sendFriendRequest, loadUserData } from '../utils/api'; // Import the fetchUsers and sendFriendRequest functions
 
 const FindFriendsPage = () => {
   const [users, setUsers] = useState([]);
@@ -13,6 +13,7 @@ const FindFriendsPage = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [sentRequests, setSentRequests] = useState([]); // Track sent friend requests
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [friends, setFriends] = useState([]); // Track friends
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -21,6 +22,9 @@ const FindFriendsPage = () => {
         const fetchedUsers = await fetchUsers();
         setUsers(fetchedUsers);
         setFilteredUsers(fetchedUsers);
+        // Assuming you have a way to fetch the current user's friends
+        const currentUserData = await loadUserData(); // You may need to import and use this
+        setFriends(currentUserData.friends || []);
       } catch (error) {
         console.error('Error fetching users:', error);
       }
@@ -54,21 +58,20 @@ const FindFriendsPage = () => {
     );
   };
 
-  const handleAddFriendClick = (user) => {
-    setSelectedUser(user);
-    setConfirmationVisible(true);
-  };
-
-  const handleSendRequest = async () => {
+  const handleSendRequest = async (user) => {
     try {
-      await sendFriendRequest(selectedUser._id);
-      setSentRequests([...sentRequests, selectedUser._id]);
-      setConfirmationVisible(false);
-      alert(`Friend request sent to ${selectedUser.username}`);
+      await sendFriendRequest(user._id);
+      setSentRequests((prev) => [...prev, user._id]);
+      alert(`Friend request sent to ${user.username}`);
     } catch (error) {
       console.error('Error sending friend request:', error);
       alert('Failed to send friend request.');
     }
+  };
+
+  const handleAddFriendClick = (user) => {
+    setSelectedUser(user);
+    setConfirmationVisible(true);
   };
 
   const handleCancelRequest = () => {
@@ -113,27 +116,48 @@ const FindFriendsPage = () => {
           </div>
         </div>
         <div className="users-list">
-          {filteredUsers.slice(0, itemsPerPage).map((user) => (
-            <div key={user._id} className="user-card">
-              <img
-                src={`http://localhost:5000${user.profileImage || '/public/userImage.jpg'}`}
-                alt={user.username}
-                className="profile-pic"
-              />
-              <div className="user-info">
-                <p className="username">{user.username}</p>
-                <p className={`status ${user.status}`}>{user.status}</p>
-              </div>
-              {sentRequests.includes(user._id) ? (
-                <p>Friend request sent</p>
-              ) : (
+          {filteredUsers.slice(0, itemsPerPage).map((user) => {
+            const isRequestPending = sentRequests.includes(user._id);
+            const isFriend = friends.some((friend) => friend._id === user._id);
+
+            if (isRequestPending) {
+              return (
+                <div key={user._id} className="user-card">
+                  <img
+                    src={`http://localhost:5000${user.profileImage || '/public/userImage.jpg'}`}
+                    alt={user.username}
+                    className="profile-pic"
+                  />
+                  <div className="user-info">
+                    <p className="username">{user.username}</p>
+                    <p className="status">Friend request sent</p>
+                  </div>
+                </div>
+              );
+            }
+
+            if (isFriend) {
+              return null; // Do not show the user in the Find Friends list
+            }
+
+            return (
+              <div key={user._id} className="user-card">
+                <img
+                  src={`http://localhost:5000${user.profileImage || '/public/userImage.jpg'}`}
+                  alt={user.username}
+                  className="profile-pic"
+                />
+                <div className="user-info">
+                  <p className="username">{user.username}</p>
+                  <p className="status">{user.status}</p>
+                </div>
                 <FiPlusCircle
                   className="add-friend-button"
                   onClick={() => handleAddFriendClick(user)}
                 />
-              )}
-            </div>
-          ))}
+              </div>
+            );
+          })}
         </div>
         {filteredUsers.length > itemsPerPage && (
           <button

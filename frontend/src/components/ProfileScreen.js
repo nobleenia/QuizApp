@@ -12,7 +12,7 @@ import {
   acceptFriendRequest,
   declineFriendRequest,
 } from '../utils/api';
-import { loadCompletedQuizzes } from '../utils/api'; // Add this import
+import { loadCompletedQuizzes } from '../utils/api';
 
 const ProfileScreen = () => {
   const [username, setUsername] = useState('');
@@ -24,14 +24,15 @@ const ProfileScreen = () => {
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [profileImage, setProfileImage] = useState(userImage);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
-  const [friendRequests, setFriendRequests] = useState([]); // Manage friend requests
+  const [friendRequests, setFriendRequests] = useState([]);
+  const [userId, setUserId] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const userData = await loadUserData();
-        console.log('Fetched User Data:', userData); // Debugging line
+        console.log('Fetched User Data:', userData);
         const completedQuizzes = await loadCompletedQuizzes();
 
         if (userData) {
@@ -42,6 +43,7 @@ const ProfileScreen = () => {
           setAchievements(userData.achievements || []);
           setFriends(userData.friends || []);
           setFriendRequests(userData.friendRequests || []);
+          setUserId(userData.userId);
         }
 
         if (completedQuizzes) {
@@ -133,6 +135,8 @@ const ProfileScreen = () => {
       setFriendRequests((prevRequests) =>
         prevRequests.filter((req) => req._id !== requestId),
       );
+      const updatedUserData = await loadUserData();
+      setFriends(updatedUserData.friends); // Update friends list immediately
       alert('Friend request accepted.');
     } catch (error) {
       console.error('Error accepting friend request:', error);
@@ -235,7 +239,12 @@ const ProfileScreen = () => {
             ) : (
               friends.map((friend, index) => (
                 <div className="friend" key={index}>
-                  <p>{friend.name}</p>
+                  <img
+                    src={friend.profileImage || userImage}
+                    alt={friend.username}
+                    className="friend-profile-image"
+                  />
+                  <p>{friend.username}</p>
                 </div>
               ))
             )}
@@ -256,12 +265,16 @@ const ProfileScreen = () => {
               friendRequests.map((request, index) => (
                 <div className="friend-request" key={index}>
                   <p>{request.from.username}</p>
-                  <button onClick={() => handleAcceptRequest(request._id)}>
-                    Accept
-                  </button>
-                  <button onClick={() => handleDeclineRequest(request._id)}>
-                    Decline
-                  </button>
+                  {request.from._id !== userId && (
+                    <>
+                      <button onClick={() => handleAcceptRequest(request._id)}>
+                        Accept
+                      </button>
+                      <button onClick={() => handleDeclineRequest(request._id)}>
+                        Decline
+                      </button>
+                    </>
+                  )}
                 </div>
               ))
             )}

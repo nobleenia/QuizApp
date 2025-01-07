@@ -172,10 +172,15 @@ export const sendFriendRequest = async (recipientId) => {
       'Content-Type': 'application/json',
       'x-auth-token': token,
     },
-    body: JSON.stringify({ recipientId }),
+    body: JSON.stringify({ recipientId }), // Ensure recipientId is passed
   });
 
   if (!response.ok) {
+    console.log(
+      'Failed to send friend request',
+      response.status,
+      response.statusText,
+    );
     throw new Error('Failed to send friend request');
   }
 
