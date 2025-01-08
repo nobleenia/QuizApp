@@ -1,21 +1,6 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
 
 const UserSchema = new mongoose.Schema({
-  username: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
   country: {
     type: String,
     required: true,
@@ -25,21 +10,40 @@ const UserSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
-  date: {
-    type: Date,
-    default: Date.now,
+  email: {
+    type: String,
+    unique: true,
+    required: true,
+  },
+  username: {
+    type: String,
+    unique: true,
+    required: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  role: {
+    type: String,
+    enum: ['admin', 'user'],
+    default: 'user', // Default role is 'user'
   },
   points: {
     type: Number,
     default: 0,
   },
+  friendRequests: [
+    {
+      from: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // The sender of the friend request
+      status: { type: String, enum: ['pending', 'accepted', 'rejected'], default: 'pending' }, // Request status
+    },
+  ],
+  friends: [
+    { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // The user's friends
+  ],
   profileImage: {
     type: String,
-    default: '/public/userImage.jpg', // Default profile image path
-  },
-  status: {
-    type: String,
-    default: 'offline',
   },
   friends: [
     {
@@ -49,17 +53,18 @@ const UserSchema = new mongoose.Schema({
   ],
   friendRequests: [
     {
-      from: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User', // This is crucial for population to work
-      },
-      status: {
-        type: String,
-        enum: ['pending', 'accepted', 'declined'],
-        default: 'pending',
-      },
+      from: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     },
   ],
+  status: {
+    type: String,
+    enum: ['online', 'offline'],
+    default: 'offline',
+  },
+  date: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 const User = mongoose.model('User', UserSchema);
