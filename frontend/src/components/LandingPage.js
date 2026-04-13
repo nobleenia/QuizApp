@@ -12,7 +12,7 @@ import bgImage3 from '../assets/bgImage3.jpg';
 
 const LandingPage = () => {
   const navigate = useNavigate();
-  const [showAllCards, setShowAllCards] = useState(false);
+  const [showAllCards] = useState(false);
 
   const googlePlayUrl =
     'https://play.google.com/store/apps/details?id=YOUR_APP_ID';

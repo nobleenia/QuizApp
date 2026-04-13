@@ -10,7 +10,6 @@ import { loadUserData, loadCompletedQuizzes } from '../utils/api';
 
 const HomeScreen = () => {
   const [username, setUsername] = useState('');
-  const [categories, setCategories] = useState([]);
   const [groupedCategories, setGroupedCategories] = useState({});
   const [showMoreCategories, setShowMoreCategories] = useState(false);
   const [showMoreTrending, setShowMoreTrending] = useState(false);
@@ -28,7 +27,6 @@ const HomeScreen = () => {
           'http://localhost:5000/api/quiz/categories',
         );
         const fetchedCategories = response.data;
-        setCategories(fetchedCategories);
         setTrending(
           fetchedCategories.sort(() => Math.random() - 0.5).slice(0, 20),
         );
@@ -60,7 +58,14 @@ const HomeScreen = () => {
     const fetchCompletedQuizzes = async () => {
       try {
         const data = await loadCompletedQuizzes();
-        setCompletedQuizzes(data);
+        // Handle both possible backend responses: array or object with quizzes property
+        if (Array.isArray(data)) {
+          setCompletedQuizzes(data);
+        } else if (data && Array.isArray(data.quizzes)) {
+          setCompletedQuizzes(data.quizzes);
+        } else {
+          setCompletedQuizzes([]);
+        }
       } catch (error) {
         console.error('Failed to fetch completed quizzes:', error);
       }
@@ -245,7 +250,7 @@ const HomeScreen = () => {
             <h3>Your Invite Link</h3>
             <p>
               Copy and share this link to invite friends:{' '}
-              <a href="#">https://quizapp.com/invite/uniqueCode</a>
+              <button className="link-button" onClick={(e) => e.preventDefault()}>https://quizapp.com/invite/uniqueCode</button>
             </p>
             <button onClick={() => setInvitePopupVisible(false)}>Close</button>
           </div>

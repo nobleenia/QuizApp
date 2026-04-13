@@ -60,10 +60,11 @@ const QuizSelectionScreen = () => {
   useEffect(() => {
     const fetchCompletedSessions = async () => {
       try {
-        const completedSessions = await loadCompletedSessions();
-        setCompletedSessions(completedSessions);
+        const data = await loadCompletedSessions();
+        setCompletedSessions(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error('Failed to fetch completed sessions:', error);
+        setCompletedSessions([]);
       }
     };
 

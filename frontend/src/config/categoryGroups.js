@@ -9,10 +9,10 @@ import { ReactComponent as GeographyIcon } from '../assets/categories/geography.
 import { ReactComponent as HistoryIcon } from '../assets/categories/history.svg';
 import { ReactComponent as AutoIcon } from '../assets/categories/cars.svg';
 import { ReactComponent as CurrentIcon } from '../assets/categories/current-affairs.svg';
-import { ReactComponent as PoliticsIcon } from '../assets/categories/politics.svg';
+// import { ReactComponent as PoliticsIcon } from '../assets/categories/politics.svg';
 import { ReactComponent as AnimalsIcon } from '../assets/categories/animals.svg';
 import { ReactComponent as ProgrammingIcon } from '../assets/categories/programming.svg';
-import { ReactComponent as MathsIcon } from '../assets/categories/mathematics.svg';
+// import { ReactComponent as MathsIcon } from '../assets/categories/mathematics.svg';
 import { ReactComponent as ScienceIcon } from '../assets/categories/science.svg';
 import { ReactComponent as ArtsIcon } from '../assets/categories/art.svg';
 import { ReactComponent as LawIcon } from '../assets/categories/law.svg';

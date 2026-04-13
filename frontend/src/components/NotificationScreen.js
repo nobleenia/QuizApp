@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import Footer from './Footer';
 
 const NotificationScreen = () => {
-  const [notifications, setNotifications] = useState([]);
+  const [notifications] = useState([]);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const navigate = useNavigate();
 

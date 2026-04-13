@@ -33,7 +33,12 @@ const ProfileScreen = () => {
       try {
         const userData = await loadUserData();
         console.log('Fetched User Data:', userData);
-        const completedQuizzes = await loadCompletedQuizzes();
+        const completedQuizzesResponse = await loadCompletedQuizzes();
+        const completedQuizzes = Array.isArray(completedQuizzesResponse) 
+          ? completedQuizzesResponse 
+          : (completedQuizzesResponse && Array.isArray(completedQuizzesResponse.quizzes) 
+            ? completedQuizzesResponse.quizzes 
+            : []);
 
         if (userData) {
           setUsername(userData.username || '');
@@ -46,7 +51,7 @@ const ProfileScreen = () => {
           setUserId(userData.userId);
         }
 
-        if (completedQuizzes) {
+        if (completedQuizzes && completedQuizzes.length > 0) {
           const totalPoints = completedQuizzes.reduce(
             (acc, quiz) => acc + quiz.score,
             0,

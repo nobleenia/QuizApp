@@ -1,14 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import './QuizResultsPage.css';
 import { FiArrowLeft } from 'react-icons/fi';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Footer from './Footer';
 
 const QuizResultsPage = () => {
-  const { quizId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const { scores, totalQuestions, title, category, subcategory } =
+  const { scores, totalQuestions, title, category } =
     location.state || {}; // Get scores and totalQuestions from the state
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 

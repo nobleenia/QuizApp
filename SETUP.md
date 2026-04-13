@@ -215,12 +215,14 @@ docker-compose up -d
 15. **Start the Backend**
 ```bash
 cd backend
+npm install
 npm start
 ```
 
 16. **Start the Frontend**
 ```bash
 cd frontend
+npm install
 npm start
 ```
 

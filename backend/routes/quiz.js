@@ -42,6 +42,42 @@ router.get('/quizzes/:category', async (req, res) => {
   res.status(500).json({ message: 'Failed to fetch quizzes after multiple attempts.' });
 });
 
+// Endpoint to create trivia sessions based on a subcategory
+router.get('/create-sessions/:subcategory', async (req, res) => {
+  const { subcategory } = req.params;
+
+  let attempts = 0;
+  while (attempts < MAX_RETRIES) {
+    try {
+      const response = await axios.get(`https://the-trivia-api.com/v2/questions?categories=${subcategory}&limit=30`);
+      const questions = response.data;
+      
+      const sessions = [];
+      // Break the fetched questions into sessions of 10
+      for (let i = 0; i < questions.length; i += 10) {
+        sessions.push({
+          sessionId: `dummy-session-id-${Math.floor(i / 10)}`, // Aligning with dummy session logic from frontend
+          questions: questions.slice(i, i + 10),
+        });
+      }
+
+      // Format fallback if no questions were returned
+      if (sessions.length === 0) {
+        sessions.push({
+          sessionId: 'dummy-session-id-0',
+          questions: []
+        });
+      }
+
+      return res.json(sessions);
+    } catch (error) {
+      attempts++;
+      console.error(`Attempt ${attempts} failed to fetch sessions for subcategory ${subcategory}:`, error.message);
+    }
+  }
+  res.status(500).json({ message: 'Failed to create quiz sessions after multiple attempts.' });
+});
+
 // Admin route to create quizzes
 router.post('/create', verifyToken, authorizeRole('admin'), async (req, res) => {
   const { title, questions } = req.body;

@@ -7,13 +7,12 @@ import {
   saveQuizState,
   loadQuizState,
   saveQuizResult,
-  loadCompletedQuizzes,
 } from '../utils/api';
 
 const QuizScreen = () => {
   const { category, quizId } = useParams();
   const location = useLocation();
-  const questionsFromLocation = location.state?.questions || [];
+  const questionsFromLocation = React.useMemo(() => location.state?.questions || [], [location.state]);
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState(null);
@@ -81,6 +80,7 @@ const QuizScreen = () => {
     }, 1000);
 
     return () => clearInterval(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentQuestionIndex]);
 
   const handleOptionSelect = (index) => {
@@ -134,7 +134,7 @@ const QuizScreen = () => {
   };
 
   const markSessionAsCompleted = () => {
-    const sessionId = parseInt(quizId.split('-').pop(), 10);
+    // const sessionId = parseInt(quizId.split('-').pop(), 10);
     // Save session completion in the database if necessary
   };
 
