@@ -7,6 +7,7 @@ import {
   saveQuizState,
   loadQuizState,
   saveQuizResult,
+  logoutUser,
 } from '../utils/api';
 
 const QuizScreen = () => {
@@ -86,42 +87,43 @@ const QuizScreen = () => {
   const handleOptionSelect = (index) => {
     if (selectedOption === null) {
       setSelectedOption(index);
-      if (index === questions[currentQuestionIndex]?.correctAnswerIndex) {
-        setScores(scores + 10);
-      }
     }
   };
 
+  const getScoreAfterCurrentQuestion = () => {
+    const currentQuestion = questions[currentQuestionIndex];
+    const isCorrect = selectedOption !== null && selectedOption === currentQuestion?.correctAnswerIndex;
+    return scores + (isCorrect ? 10 : 0);
+  };
+
   const handleNextQuestion = () => {
-    if (selectedOption === null) {
-      // Treat unanswered question as wrong answer
-      setSelectedOption('unanswered');
-    }
+    const nextScore = getScoreAfterCurrentQuestion();
+    setScores(nextScore);
 
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
       setSelectedOption(null);
       setTimeRemaining(30);
     } else {
-      handleQuizCompletion();
+      handleQuizCompletion(nextScore);
     }
   };
 
-  const handleQuizCompletion = () => {
+  const handleQuizCompletion = (finalScore) => {
     markSessionAsCompleted();
-    saveQuizResultToDB();
+    saveQuizResultToDB(finalScore);
     navigate(`/results/${quizId}`, {
-      state: { scores, totalQuestions: questions.length },
+      state: { scores: finalScore, totalQuestions: questions.length },
     });
   };
 
-  const saveQuizResultToDB = async () => {
+  const saveQuizResultToDB = async (finalScore) => {
     const quizResult = {
       quizId,
       title: `Quiz ${quizId}`, // Replace with actual title if available
       category,
-      subcategory: questions[0]?.subcategory || 'General', // Use a default value if subcategory is not available
-      score: scores,
+      subcategory: questions[0]?.subcategory || category || 'General',
+      score: finalScore,
       total: questions.length * 10,
     };
 
@@ -155,9 +157,16 @@ const QuizScreen = () => {
     }
   };
 
-  const handleLogoutClick = () => {
-    saveQuizStateToDB();
-    navigate('/login');
+  const handleLogoutClick = async () => {
+    try {
+      await saveQuizStateToDB();
+      await logoutUser();
+    } catch (error) {
+      console.error('Logout failed:', error);
+      localStorage.removeItem('token');
+    } finally {
+      navigate('/login');
+    }
   };
 
   const getOptionClass = (index) => {

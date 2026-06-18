@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { FiArrowLeft, FiBell } from 'react-icons/fi';
 import './QuizAnalysisPage.css';
 import Footer from './Footer';
+import { logoutUser } from '../utils/api';
 import {
   PieChart,
   Pie,
@@ -61,9 +62,15 @@ const QuizAnalysisPage = () => {
     setShowLogoutConfirm(true);
   };
 
-  const handleConfirmLogout = () => {
+  const handleConfirmLogout = async () => {
     setShowLogoutConfirm(false);
-    navigate('/'); // Navigate to the LandingPage
+    try {
+      await logoutUser();
+    } catch (error) {
+      console.error('Logout failed:', error);
+      localStorage.removeItem('token');
+    }
+    navigate('/');
   };
 
   const handleCancelLogout = () => {

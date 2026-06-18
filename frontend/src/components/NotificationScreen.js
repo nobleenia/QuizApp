@@ -3,6 +3,7 @@ import './NotificationScreen.css';
 import { FiArrowLeft } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import Footer from './Footer';
+import { logoutUser } from '../utils/api';
 
 const NotificationScreen = () => {
   const [notifications] = useState([]);
@@ -18,9 +19,15 @@ const NotificationScreen = () => {
     setShowLogoutConfirm(true);
   };
 
-  const handleConfirmLogout = () => {
+  const handleConfirmLogout = async () => {
     setShowLogoutConfirm(false);
-    navigate('/'); // Navigate to the LandingPage
+    try {
+      await logoutUser();
+    } catch (error) {
+      console.error('Logout failed:', error);
+      localStorage.removeItem('token');
+    }
+    navigate('/');
   };
 
   const handleCancelLogout = () => {

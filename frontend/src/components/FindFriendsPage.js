@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import './FindFriendsPage.css';
 import { useNavigate } from 'react-router-dom';
 import { FiBell, FiArrowLeft, FiSearch, FiPlusCircle } from 'react-icons/fi';
-import { fetchUsers, sendFriendRequest, loadUserData } from '../utils/api'; // Import the fetchUsers and sendFriendRequest functions
+import { fetchUsers, sendFriendRequest, loadUserData, logoutUser } from '../utils/api';
+import defaultUserImage from '../assets/userImage.jpg';
 
 const FindFriendsPage = () => {
   const [users, setUsers] = useState([]);
@@ -37,9 +38,15 @@ const FindFriendsPage = () => {
     setShowLogoutConfirm(true);
   };
 
-  const handleConfirmLogout = () => {
+  const handleConfirmLogout = async () => {
     setShowLogoutConfirm(false);
-    navigate('/'); // Navigate to the LandingPage
+    try {
+      await logoutUser();
+    } catch (error) {
+      console.error('Logout failed:', error);
+      localStorage.removeItem('token');
+    }
+    navigate('/');
   };
 
   const handleCancelLogout = () => {
@@ -58,11 +65,15 @@ const FindFriendsPage = () => {
     );
   };
 
-  const handleSendRequest = async (user) => {
+  const getProfileImage = (user) => user.profileImage || defaultUserImage;
+
+  const handleSendRequest = async () => {
+    if (!selectedUser) return;
     try {
-      await sendFriendRequest(user._id);
-      setSentRequests((prev) => [...prev, user._id]);
-      alert(`Friend request sent to ${user.username}`);
+      await sendFriendRequest(selectedUser._id);
+      setSentRequests((prev) => [...prev, selectedUser._id]);
+      alert(`Friend request sent to ${selectedUser.username}`);
+      setConfirmationVisible(false);
     } catch (error) {
       console.error('Error sending friend request:', error);
       alert('Failed to send friend request.');
@@ -124,7 +135,7 @@ const FindFriendsPage = () => {
               return (
                 <div key={user._id} className="user-card">
                   <img
-                    src={`http://localhost:5000${user.profileImage || '/public/userImage.jpg'}`}
+                    src={getProfileImage(user)}
                     alt={user.username}
                     className="profile-pic"
                   />
@@ -143,7 +154,7 @@ const FindFriendsPage = () => {
             return (
               <div key={user._id} className="user-card">
                 <img
-                  src={`http://localhost:5000${user.profileImage || '/public/userImage.jpg'}`}
+                  src={getProfileImage(user)}
                   alt={user.username}
                   className="profile-pic"
                 />

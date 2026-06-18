@@ -11,8 +11,9 @@ import {
   updateProfileImage,
   acceptFriendRequest,
   declineFriendRequest,
+  logoutUser,
+  loadCompletedQuizzes,
 } from '../utils/api';
-import { loadCompletedQuizzes } from '../utils/api';
 
 const ProfileScreen = () => {
   const [username, setUsername] = useState('');
@@ -106,8 +107,14 @@ const ProfileScreen = () => {
     setShowLogoutConfirm(true);
   };
 
-  const handleConfirmLogout = () => {
+  const handleConfirmLogout = async () => {
     setShowLogoutConfirm(false);
+    try {
+      await logoutUser();
+    } catch (error) {
+      console.error('Logout failed:', error);
+      localStorage.removeItem('token');
+    }
     navigate('/');
   };
 

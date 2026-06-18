@@ -1,11 +1,33 @@
-version: '3.8'
 services:
-  mongo:
-    image: mongo
-    container_name: mongodb
+  app:
+    build: .
+    container_name: quizapp
+    restart: unless-stopped
     ports:
-      - '27017:27017'
+      - "5000:5000"
+    environment:
+      NODE_ENV: production
+      PORT: 5000
+      MONGO_URI: mongodb://mongo:27017/quizapp
+      JWT_SECRET: local_docker_dev_secret_change_for_production
+      TRIVIA_API_BASE_URL: https://the-trivia-api.com/v2
+      REDIS_URL: redis://redis:6379
+      REDIS_DISABLED: "false"
+    depends_on:
+      - mongo
+      - redis
+
+  mongo:
+    image: mongo:7
+    container_name: quizapp-mongo
+    restart: unless-stopped
     volumes:
       - mongo-data:/data/db
+
+  redis:
+    image: redis:7-alpine
+    container_name: quizapp-redis
+    restart: unless-stopped
+
 volumes:
   mongo-data:

@@ -1,5 +1,4 @@
 const express = require('express');
-const axios = require('axios');
 const router = express.Router();
 const mongoose = require('mongoose');
 const QuizResult = require('../models/QuizResult');
@@ -10,13 +9,32 @@ const { verifyToken, authorizeRole } = require('../middleware/authMiddleware');
 
 const MAX_RETRIES = 3;
 
+const getTriviaBaseUrl = () => process.env.TRIVIA_API_BASE_URL || 'https://the-trivia-api.com/v2';
+
+const fetchJson = async (url) => {
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    throw new Error(`Request failed with status ${response.status}`);
+  }
+
+  return response.json();
+};
+
+const toSafeInteger = (value, fallback = 0) => {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) return fallback;
+  return Math.max(0, Math.floor(parsed));
+};
+
+
 // Endpoint to fetch all quiz categories
 router.get('/categories', async (req, res) => {
   let attempts = 0;
   while (attempts < MAX_RETRIES) {
     try {
-      const response = await axios.get('https://the-trivia-api.com/v2/tags');
-      return res.json(response.data);
+      const data = await fetchJson(`${getTriviaBaseUrl()}/tags`);
+      return res.json(data);
     } catch (error) {
       attempts++;
       console.error(`Attempt ${attempts} failed to fetch categories:`, error.message);
@@ -32,8 +50,8 @@ router.get('/quizzes/:category', async (req, res) => {
   let attempts = 0;
   while (attempts < MAX_RETRIES) {
     try {
-      const response = await axios.get(`https://the-trivia-api.com/v2/questions?categories=${category}`);
-      return res.json(response.data);
+      const data = await fetchJson(`${getTriviaBaseUrl()}/questions?categories=${encodeURIComponent(category)}`);
+      return res.json(data);
     } catch (error) {
       attempts++;
       console.error(`Attempt ${attempts} failed to fetch quizzes:`, error.message);
@@ -49,8 +67,7 @@ router.get('/create-sessions/:subcategory', async (req, res) => {
   let attempts = 0;
   while (attempts < MAX_RETRIES) {
     try {
-      const response = await axios.get(`https://the-trivia-api.com/v2/questions?categories=${subcategory}&limit=30`);
-      const questions = response.data;
+      const questions = await fetchJson(`${getTriviaBaseUrl()}/questions?categories=${encodeURIComponent(subcategory)}&limit=30`);
       
       const sessions = [];
       // Break the fetched questions into sessions of 10
@@ -229,7 +246,7 @@ router.get('/user-scores', async (req, res) => {
 
   try {
     const scores = await QuizResult.aggregate([
-      { $match: { userId: mongoose.Types.ObjectId(userId) } },
+      { $match: { userId: new mongoose.Types.ObjectId(userId) } },
       { $group: { _id: '$category', totalScore: { $sum: '$score' } } },
     ]);
 
@@ -240,64 +257,98 @@ router.get('/user-scores', async (req, res) => {
   }
 });
 
-// Fetch Completed Quizzes with Pagination
+// Fetch completed quizzes. Supports optional pagination with ?page=1&limit=10.
 router.get('/completed-quizzes', async (req, res) => {
   const { userId } = req.user;
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 10;
+  const page = Math.max(parseInt(req.query.page, 10) || 0, 0);
+  const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 0, 0), 50);
 
   try {
-    const quizzes = await QuizResult.find({ userId })
-      .skip((page - 1) * limit)
-      .limit(limit)
-      .sort({ date: -1 });
+    const query = { userId };
+    const baseQuery = QuizResult.find(query).sort({ date: -1 });
 
-    const totalQuizzes = await QuizResult.countDocuments({ userId });
+    if (!page || !limit) {
+      const completedQuizzes = await baseQuery;
+      return res.status(200).json(completedQuizzes);
+    }
 
-    res.status(200).json({
+    const quizzes = await baseQuery.skip((page - 1) * limit).limit(limit);
+    const totalQuizzes = await QuizResult.countDocuments(query);
+
+    return res.status(200).json({
       quizzes,
       totalPages: Math.ceil(totalQuizzes / limit),
       currentPage: page,
     });
   } catch (err) {
     console.error('Failed to fetch completed quizzes:', err);
-    res.status(500).json({ message: 'Failed to fetch completed quizzes' });
+    return res.status(500).json({ message: 'Failed to fetch completed quizzes' });
   }
 });
 
 // Save quiz result
 router.post('/save-result', async (req, res) => {
   const { userId } = req.user;
-  const { quizId, title, category, subcategory, score, total } = req.body;
+  const { quizId, title, category, subcategory } = req.body;
+  const total = toSafeInteger(req.body.total, 0);
+  const submittedScore = toSafeInteger(req.body.score, 0);
+  const score = Math.min(submittedScore, total);
+
+  if (!quizId || !title || !category || !subcategory || total <= 0) {
+    return res.status(400).json({ message: 'quizId, title, category, subcategory, and positive total are required' });
+  }
 
   try {
-    const quizResult = new QuizResult({
-      userId,
-      quizId,
-      title,
-      category,
-      subcategory,
-      score,
-      total,
-    });
+    const existingResult = await QuizResult.findOne({ userId, quizId, category, subcategory });
 
-    await quizResult.save();
+    let pointDelta = score;
+    let quizResult;
+
+    if (existingResult) {
+      pointDelta = score - existingResult.score;
+      existingResult.title = title;
+      existingResult.score = score;
+      existingResult.total = total;
+      existingResult.date = new Date();
+      quizResult = await existingResult.save();
+    } else {
+      quizResult = await QuizResult.create({
+        userId,
+        quizId,
+        title,
+        category,
+        subcategory,
+        score,
+        total,
+      });
+    }
 
     const user = await User.findById(userId);
-    user.points = (user.points || 0) + score;
-    await user.save();
+    if (user) {
+      user.points = Math.max(0, (user.points || 0) + pointDelta);
+      await user.save();
+    }
 
-    res.status(200).json(quizResult);
+    return res.status(200).json(quizResult);
   } catch (err) {
     console.error('Failed to save quiz result:', err);
-    res.status(500).json({ message: 'Server error' });
+    return res.status(500).json({ message: 'Server error' });
   }
 });
 
 // Save quiz state
 router.post('/save-state', async (req, res) => {
   const { userId } = req.user;
-  const { quizId, currentQuestionIndex, timeRemaining, scores, questions } = req.body;
+  const { quizId } = req.body;
+  const questions = Array.isArray(req.body.questions) ? req.body.questions : [];
+  const currentQuestionIndex = Math.min(toSafeInteger(req.body.currentQuestionIndex, 0), Math.max(questions.length - 1, 0));
+  const timeRemaining = Math.min(toSafeInteger(req.body.timeRemaining, 30), 30);
+  const maxScore = questions.length * 10;
+  const scores = Math.min(toSafeInteger(req.body.scores, 0), maxScore);
+
+  if (!quizId || questions.length === 0) {
+    return res.status(400).json({ message: 'quizId and questions are required' });
+  }
 
   try {
     let quizState = await QuizState.findOne({ userId, quizId });
@@ -339,19 +390,6 @@ router.get('/load-state/:quizId', async (req, res) => {
     res.status(200).json(quizState);
   } catch (err) {
     console.error('Failed to retrieve quiz state:', err);
-    res.status(500).json({ message: 'Server error' });
-  }
-});
-
-// Retrieve completed quizzes
-router.get('/completed-quizzes', async (req, res) => {
-  const { userId } = req.user;
-
-  try {
-    const completedQuizzes = await QuizResult.find({ userId });
-    res.status(200).json(completedQuizzes);
-  } catch (err) {
-    console.error('Failed to retrieve completed quizzes:', err);
     res.status(500).json({ message: 'Server error' });
   }
 });

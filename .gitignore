@@ -1,0 +1,60 @@
+# dependencies
+node_modules/
+backend/node_modules/
+frontend/node_modules/
+
+# build outputs
+build/
+dist/
+frontend/build/
+backend/public/
+
+# env/secrets
+.env
+.env.*
+backend/.env
+backend/.env.*
+frontend/.env
+frontend/.env.*
+!.env.example
+!backend/.env.example
+!frontend/.env.example
+
+# logs/cache
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+coverage/
+.cache/
+.netlify/
+
+# OS/editor
+.DS_Store
+.vscode/
+.idea/
+*:Zone.Identifier
+
+# Local backups
+*.bak
+*.backup
+backend.bak/
+frontend.bak/
+backend.before-*/
+frontend.before-*/
+docker-compose*.bak
+docker-compose.before-*.yml
+
+# Dependencies and generated files
+node_modules/
+backend/node_modules/
+frontend/node_modules/
+build/
+dist/
+coverage/
+*.log
+
+# Environment files
+.env
+backend/.env
+frontend/.env

@@ -3,12 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import './Auth.css';
 import logo from '../assets/logo.png';
 import { FiArrowLeft } from 'react-icons/fi';
+import { loginUser } from '../utils/api';
 
 const Login = () => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-    role: 'user', // Default role is user
   });
 
   const navigate = useNavigate();
@@ -24,34 +24,12 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password,
-        }),
-      });
-
-      const data = await response.json();
-      if (response.ok) {
-        // Store JWT token in localStorage
-        localStorage.setItem('token', data.token);
-
-        // Navigate based on the role
-        if (formData.role === 'admin') {
-          navigate('/admin-dashboard');
-        } else {
-          navigate('/home');
-        }
-      } else {
-        // Handle error
-        alert(data?.message || 'Login failed');
-      }
+      const data = await loginUser(formData.email, formData.password);
+      localStorage.setItem('token', data.token);
+      navigate('/home');
     } catch (error) {
       console.error('Error during login:', error);
+      alert(error.message || 'Login failed');
     }
   };
 
@@ -87,28 +65,6 @@ const Login = () => {
               placeholder="Enter Password"
               required
             />
-          </div>
-          <div className="auth-input">
-            <label>
-              <input
-                type="radio"
-                name="role"
-                value="user"
-                checked={formData.role === 'user'}
-                onChange={handleChange}
-              />
-              User
-            </label>
-            <label>
-              <input
-                type="radio"
-                name="role"
-                value="admin"
-                checked={formData.role === 'admin'}
-                onChange={handleChange}
-              />
-              Administrator
-            </label>
           </div>
           <button type="submit" className="auth-button">
             Log In

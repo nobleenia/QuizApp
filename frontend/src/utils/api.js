@@ -1,214 +1,124 @@
-const API_URL = 'http://localhost:5000/api';
+export const API_URL = (
+  process.env.REACT_APP_API_URL ||
+  (process.env.NODE_ENV === 'development' ? 'http://localhost:5000/api' : '/api')
+).replace(/\/$/, '');
 
-const getToken = () => {
-  const token = localStorage.getItem('token');
-  console.log('Retrieved token:', token); // Debugging token retrieval
-  return token;
+const getToken = () => localStorage.getItem('token');
+
+const authHeaders = () => {
+  const token = getToken();
+  return token ? { 'x-auth-token': token } : {};
 };
 
-export const fetchUsers = async () => {
-  const token = getToken();
-  const response = await fetch(`${API_URL}/userData/users`, {
-    method: 'GET',
+const request = async (path, options = {}) => {
+  const response = await fetch(`${API_URL}${path}`, {
+    ...options,
     headers: {
-      'x-auth-token': token,
+      ...(options.body ? { 'Content-Type': 'application/json' } : {}),
+      ...authHeaders(),
+      ...(options.headers || {}),
     },
   });
+
+  const contentType = response.headers.get('content-type') || '';
+  const payload = contentType.includes('application/json')
+    ? await response.json()
+    : await response.text();
+
   if (!response.ok) {
-    throw new Error('Failed to fetch users');
+    const message = typeof payload === 'object' ? payload.message : payload;
+    throw new Error(message || `Request failed with status ${response.status}`);
   }
-  return response.json();
+
+  return payload;
 };
 
-export const saveUserData = async (data, profileImage) => {
-  const token = getToken();
-  const response = await fetch(`${API_URL}/userData/save`, {
+export const loginUser = async (email, password) =>
+  request('/auth/login', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-auth-token': token,
-    },
+    body: JSON.stringify({ email, password }),
+  });
+
+export const registerUser = async (formData) =>
+  request('/auth/register', {
+    method: 'POST',
+    body: JSON.stringify(formData),
+  });
+
+export const logoutUser = async () => {
+  try {
+    await request('/auth/logout', { method: 'POST' });
+  } finally {
+    localStorage.removeItem('token');
+  }
+};
+
+export const fetchQuizCategories = async () => request('/quiz/categories');
+
+export const fetchQuizSessions = async (selectedSubcategory) =>
+  request(`/quiz/create-sessions/${encodeURIComponent(selectedSubcategory)}`);
+
+export const fetchUsers = async () => request('/userData/users');
+
+export const saveUserData = async (data, profileImage) =>
+  request('/userData/save', {
+    method: 'POST',
     body: JSON.stringify({ data, profileImage }),
   });
-  return response.json();
-};
 
-export const loadUserData = async () => {
-  const token = getToken();
-  const response = await fetch(`${API_URL}/userData/load`, {
-    method: 'GET',
-    headers: {
-      'x-auth-token': token,
-    },
-  });
-  if (!response.ok) {
-    throw new Error('Failed to load user data');
-  }
-  return response.json();
-};
+export const loadUserData = async () => request('/userData/load');
 
-export const updateProfileImage = async (profileImage) => {
-  const token = getToken();
-  const response = await fetch(`${API_URL}/userData/profile-image`, {
+export const updateProfileImage = async (profileImage) =>
+  request('/userData/profile-image', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-auth-token': token,
-    },
     body: JSON.stringify({ profileImage }),
   });
-  if (!response.ok) {
-    throw new Error('Failed to update profile image');
-  }
-  return response.json();
-};
 
-export const saveQuizResult = async (quizResult) => {
-  const token = getToken();
-  const response = await fetch(`${API_URL}/quiz/save-result`, {
+export const saveQuizResult = async (quizResult) =>
+  request('/quiz/save-result', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-auth-token': token,
-    },
     body: JSON.stringify(quizResult),
   });
-  return response.json();
-};
 
-export const saveQuizState = async (quizState) => {
-  const token = getToken();
-  const response = await fetch(`${API_URL}/quiz/save-state`, {
+export const saveQuizState = async (quizState) =>
+  request('/quiz/save-state', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-auth-token': token,
-    },
     body: JSON.stringify(quizState),
   });
-  return response.json();
-};
 
-export const loadQuizState = async (quizId) => {
-  const token = getToken();
-  const response = await fetch(`${API_URL}/quiz/load-state/${quizId}`, {
-    method: 'GET',
-    headers: {
-      'x-auth-token': token,
-    },
-  });
+export const loadQuizState = async (quizId) =>
+  request(`/quiz/load-state/${encodeURIComponent(quizId)}`);
 
-  if (!response.ok) {
-    throw new Error('Failed to load quiz state');
-  }
+export const loadCompletedSessions = async () => request('/quiz/completed-sessions');
 
-  return response.json();
-};
+export const loadCompletedQuizzes = async () => request('/quiz/completed-quizzes');
 
-export const loadCompletedSessions = async () => {
-  const token = getToken();
-  const response = await fetch(`${API_URL}/quiz/completed-sessions`, {
-    method: 'GET',
-    headers: {
-      'x-auth-token': token,
-    },
-  });
-  return response.json();
-};
-
-export const loadCompletedQuizzes = async () => {
-  const token = getToken();
-  const response = await fetch(`${API_URL}/quiz/completed-quizzes`, {
-    method: 'GET',
-    headers: {
-      'x-auth-token': token,
-    },
-  });
-  return response.json();
-};
-
-export const updatePassword = async (currentPassword, newPassword) => {
-  const token = getToken();
-  const response = await fetch(`${API_URL}/userData/change-password`, {
+export const updatePassword = async (currentPassword, newPassword) =>
+  request('/userData/change-password', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-auth-token': token,
-    },
     body: JSON.stringify({ currentPassword, newPassword }),
   });
 
-  if (!response.ok) {
-    throw new Error('Failed to update password');
-  }
-
-  return response.json();
-};
-
-export const updateUsername = async (newUsername) => {
-  const token = getToken();
-  const response = await fetch(`${API_URL}/userData/change-username`, {
+export const updateUsername = async (newUsername) =>
+  request('/userData/change-username', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-auth-token': token,
-    },
     body: JSON.stringify({ newUsername }),
   });
 
-  if (!response.ok) {
-    throw new Error('Failed to update username');
-  }
-
-  return response.json();
-};
-
-// Add the sendFriendRequest function here
-export const sendFriendRequest = async (recipientId) => {
-  const token = getToken();
-  const response = await fetch(`${API_URL}/userData/send-friend-request`, {
+export const sendFriendRequest = async (recipientId) =>
+  request('/userData/send-friend-request', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-auth-token': token,
-    },
-    body: JSON.stringify({ recipientId }), // Ensure recipientId is passed
+    body: JSON.stringify({ recipientId }),
   });
 
-  if (!response.ok) {
-    console.log(
-      'Failed to send friend request',
-      response.status,
-      response.statusText,
-    );
-    throw new Error('Failed to send friend request');
-  }
-
-  return response.json();
-};
-
-export const acceptFriendRequest = async (requestId) => {
-  const token = getToken();
-  const response = await fetch(`${API_URL}/userData/accept-friend-request`, {
+export const acceptFriendRequest = async (requestId) =>
+  request('/userData/accept-friend-request', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-auth-token': token,
-    },
     body: JSON.stringify({ requestId }),
   });
-  return response.json();
-};
 
-export const declineFriendRequest = async (requestId) => {
-  const token = getToken();
-  const response = await fetch(`${API_URL}/userData/decline-friend-request`, {
+export const declineFriendRequest = async (requestId) =>
+  request('/userData/decline-friend-request', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-auth-token': token,
-    },
     body: JSON.stringify({ requestId }),
   });
-  return response.json();
-};

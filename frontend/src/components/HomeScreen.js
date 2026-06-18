@@ -4,9 +4,8 @@ import userImage from '../assets/userImage.jpg';
 import Footer from './Footer';
 import { useNavigate } from 'react-router-dom';
 import { FiBell } from 'react-icons/fi';
-import axios from 'axios';
 import categoryGroups from '../config/categoryGroups';
-import { loadUserData, loadCompletedQuizzes } from '../utils/api';
+import { loadUserData, loadCompletedQuizzes, fetchQuizCategories, logoutUser } from '../utils/api';
 
 const HomeScreen = () => {
   const [username, setUsername] = useState('');
@@ -23,10 +22,7 @@ const HomeScreen = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get(
-          'http://localhost:5000/api/quiz/categories',
-        );
-        const fetchedCategories = response.data;
+        const fetchedCategories = await fetchQuizCategories();
         setTrending(
           fetchedCategories.sort(() => Math.random() - 0.5).slice(0, 20),
         );
@@ -109,8 +105,14 @@ const HomeScreen = () => {
     setShowLogoutConfirm(true);
   };
 
-  const handleConfirmLogout = () => {
+  const handleConfirmLogout = async () => {
     setShowLogoutConfirm(false);
+    try {
+      await logoutUser();
+    } catch (error) {
+      console.error('Logout failed:', error);
+      localStorage.removeItem('token');
+    }
     navigate('/');
   };
 

@@ -3,9 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import './QuizSelectionScreen.css';
 import userImage from '../assets/userImage.jpg';
 import Footer from './Footer';
-import axios from 'axios';
 import categoryGroups from '../config/categoryGroups';
-import { loadCompletedSessions } from '../utils/api'; // Import the loadCompletedSessions function
+import { loadCompletedSessions, fetchQuizSessions, logoutUser } from '../utils/api';
 
 const QuizSelectionScreen = () => {
   const { category } = useParams(); // Get the category from the URL parameters
@@ -41,10 +40,8 @@ const QuizSelectionScreen = () => {
     if (selectedSubcategory) {
       const fetchSessions = async () => {
         try {
-          const response = await axios.get(
-            `http://localhost:5000/api/quiz/create-sessions/${selectedSubcategory}`,
-          );
-          setSessions(response.data); // Set the fetched sessions
+          const data = await fetchQuizSessions(selectedSubcategory);
+          setSessions(data); // Set the fetched sessions
         } catch (error) {
           console.error(
             `Failed to fetch sessions for ${selectedSubcategory}:`,
@@ -75,9 +72,15 @@ const QuizSelectionScreen = () => {
     setShowLogoutConfirm(true);
   };
 
-  const handleConfirmLogout = () => {
+  const handleConfirmLogout = async () => {
     setShowLogoutConfirm(false);
-    navigate('/'); // Navigate to the LandingPage
+    try {
+      await logoutUser();
+    } catch (error) {
+      console.error('Logout failed:', error);
+      localStorage.removeItem('token');
+    }
+    navigate('/');
   };
 
   const handleCancelLogout = () => {

@@ -4,6 +4,7 @@ import {
   Route,
   Routes,
   useLocation,
+  Navigate,
 } from 'react-router-dom';
 import LoadingPage from './components/LoadingPage';
 import LandingPage from './components/LandingPage';
@@ -25,13 +26,20 @@ import ChangeUsername from './components/ChangeUsername';
 import ChangePassword from './components/ChangePassword';
 import './App.css';
 
+const ProtectedRoute = ({ children }) => {
+  const token = localStorage.getItem('token');
+  return token ? children : <Navigate to="/login" replace />;
+};
+
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 3000);
+    }, 1500);
+
+    return () => clearTimeout(timer);
   }, []);
 
   return (
@@ -46,21 +54,19 @@ const App = () => {
               <Route path="/signup" element={<SignUp />} />
               <Route path="/login" element={<Login />} />
               <Route path="/verification" element={<Verification />} />
-              <Route path="/home" element={<HomeScreen />} />
-              <Route path="/profile" element={<ProfileScreen />} />
-              <Route path="/quiz/:category" element={<QuizSelectionScreen />} />
-              <Route path="/quiz/:category/:quizId" element={<QuizScreen />} />
-              <Route path="/notifications" element={<NotificationScreen />} />
-              <Route path="/community" element={<CommunityPage />} />
-              <Route path="/results/:quizId" element={<QuizResultsPage />} />
-              <Route path="/quiz-analysis" element={<QuizAnalysisPage />} />
-              <Route path="/find-friends" element={<FindFriendsPage />} />
-              <Route
-                path="/quiz-completion"
-                element={<QuizCompletionScreen />}
-              />
-              <Route path="/change-username" element={<ChangeUsername />} />
-              <Route path="/change-password" element={<ChangePassword />} />
+              <Route path="/home" element={<ProtectedRoute><HomeScreen /></ProtectedRoute>} />
+              <Route path="/profile" element={<ProtectedRoute><ProfileScreen /></ProtectedRoute>} />
+              <Route path="/quiz/:category" element={<ProtectedRoute><QuizSelectionScreen /></ProtectedRoute>} />
+              <Route path="/quiz/:category/:quizId" element={<ProtectedRoute><QuizScreen /></ProtectedRoute>} />
+              <Route path="/notifications" element={<ProtectedRoute><NotificationScreen /></ProtectedRoute>} />
+              <Route path="/community" element={<ProtectedRoute><CommunityPage /></ProtectedRoute>} />
+              <Route path="/results/:quizId" element={<ProtectedRoute><QuizResultsPage /></ProtectedRoute>} />
+              <Route path="/quiz-analysis" element={<ProtectedRoute><QuizAnalysisPage /></ProtectedRoute>} />
+              <Route path="/find-friends" element={<ProtectedRoute><FindFriendsPage /></ProtectedRoute>} />
+              <Route path="/quiz-completion" element={<ProtectedRoute><QuizCompletionScreen /></ProtectedRoute>} />
+              <Route path="/change-username" element={<ProtectedRoute><ChangeUsername /></ProtectedRoute>} />
+              <Route path="/change-password" element={<ProtectedRoute><ChangePassword /></ProtectedRoute>} />
+              <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
             <FloatingIconWrapper />
           </>
@@ -70,7 +76,6 @@ const App = () => {
   );
 };
 
-// Wrapper component to use useLocation within the Router context
 const FloatingIconWrapper = () => {
   const location = useLocation();
   return location.pathname !== '/community' && <FloatingIcon />;

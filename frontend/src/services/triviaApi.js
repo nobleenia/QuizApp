@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = process.env.REACT_APP_API_BASE_URL;
+const BASE_URL = process.env.REACT_APP_TRIVIA_API_BASE_URL || 'https://the-trivia-api.com/v2';
 // const API_KEY = process.env.REACT_APP_API_KEY;
 
 const triviaApi = axios.create({
@@ -14,7 +14,7 @@ const triviaApi = axios.create({
 // Fetch categories
 export const fetchCategories = async () => {
   try {
-    const response = await triviaApi.get('/tags?category=${category}');
+    const response = await triviaApi.get('/tags');
     return response.data;
   } catch (error) {
     console.error('Error fetching categories:', error);

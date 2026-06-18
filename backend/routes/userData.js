@@ -7,6 +7,10 @@ const { verifyToken } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
+const passwordComplexity = (password) => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(password);
+
+const normalizeObjectId = (value) => value?.toString?.() || String(value);
+
 // Middleware to verify token and extract userId
 router.use(verifyToken);
 
@@ -76,14 +80,14 @@ router.get('/user-data', async (req, res) => {
     let level = Math.floor(totalPoints / 1000);
 
     res.status(200).json({
-      userId: userData.userId,
-      username: userData.username,
+      userId,
+      username: userData?.username || '',
       data: {
-        ...userData.data,
+        ...(userData?.data ? Object.fromEntries(userData.data) : {}),
         points: totalPoints,
-        level: level,
+        level,
       },
-      profileImage: userData.profileImage,
+      profileImage: userData?.profileImage || '',
     });
   } catch (err) {
     res.status(500).json({ message: 'Server error' });
@@ -95,27 +99,31 @@ router.post('/change-password', async (req, res) => {
   const { userId } = req.user;
   const { currentPassword, newPassword } = req.body;
 
+  if (!currentPassword || !newPassword) {
+    return res.status(400).json({ message: 'Current password and new password are required' });
+  }
+
+  if (!passwordComplexity(newPassword)) {
+    return res.status(400).json({
+      message:
+        'Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character.',
+    });
+  }
+
   try {
     const user = await User.findById(userId);
     if (!user) {
-      console.log('User not found');
       return res.status(404).json({ message: 'User not found' });
     }
 
     const isMatch = await bcrypt.compare(currentPassword, user.password);
     if (!isMatch) {
-      console.log('Incorrect current password');
       return res.status(400).json({ message: 'Incorrect current password' });
     }
 
-    // Ensure the new password is hashed correctly
     const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(newPassword, salt);
-    user.password = hashedPassword;
-    console.log('Password hashed during change:', hashedPassword); // Debugging line
+    user.password = await bcrypt.hash(newPassword, salt);
     await user.save();
-    console.log('Password updated successfully');
-
     res.status(200).json({ message: 'Password updated successfully' });
   } catch (err) {
     console.error('Server error', err);
@@ -126,9 +134,20 @@ router.post('/change-password', async (req, res) => {
 // Endpoint to change username
 router.post('/change-username', async (req, res) => {
   const { userId } = req.user;
-  const { newUsername } = req.body;
+  const newUsername = String(req.body.newUsername || '').trim();
+
+  if (!/^[A-Za-z0-9_]{3,30}$/.test(newUsername)) {
+    return res.status(400).json({
+      message: 'Username must be 3–30 characters and contain only letters, numbers, and underscores.',
+    });
+  }
 
   try {
+    const existing = await User.findOne({ username: newUsername, _id: { $ne: userId } });
+    if (existing) {
+      return res.status(400).json({ message: 'Username is already taken' });
+    }
+
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
@@ -139,6 +158,7 @@ router.post('/change-username', async (req, res) => {
 
     res.status(200).json({ message: 'Username updated successfully' });
   } catch (err) {
+    console.error('Error changing username:', err);
     res.status(500).json({ message: 'Server error' });
   }
 });
@@ -193,13 +213,10 @@ router.get('/users', verifyToken, async (req, res) => {
 
 // Add the friend request to the receiver's friendRequests array
 router.post('/send-friend-request', verifyToken, async (req, res) => {
-  console.log('Send friend request endpoint hit', req.user.userId);
   const { userId } = req.user; // Sender's ID
   const { recipientId } = req.body; // Receiver's ID
 
   try {
-    console.log('Request Body:', req.body);
-    console.log('Authenticated User ID:', req.user.userId);
     const sender = await User.findById(userId);
     const receiver = await User.findById(recipientId);
 
@@ -219,8 +236,12 @@ router.post('/send-friend-request', verifyToken, async (req, res) => {
       return res.status(400).json({ message: 'Friend request already sent' });
     }
 
+    if (normalizeObjectId(userId) === normalizeObjectId(recipientId)) {
+      return res.status(400).json({ message: 'You cannot send a friend request to yourself' });
+    }
+
     // Prevent adding a friend twice
-    const alreadyFriends = sender.friends.includes(recipientId);
+    const alreadyFriends = sender.friends.some((friend) => normalizeObjectId(friend) === normalizeObjectId(recipientId));
     if (alreadyFriends) {
       return res.status(400).json({ message: 'You are already friends' });
     }
@@ -238,33 +259,34 @@ router.post('/send-friend-request', verifyToken, async (req, res) => {
 
 // Accept Friend Request
 router.post('/accept-friend-request', async (req, res) => {
-  const { userId } = req.user; // The receiver of the friend request
-  const { requestId } = req.body; // The request ID to be accepted
+  const { userId } = req.user;
+  const { requestId } = req.body;
 
   try {
-    // Find the receiver and the friend request
     const receiver = await User.findById(userId);
-    const friendRequest = receiver.friendRequests.id(requestId);
+    if (!receiver) return res.status(404).json({ message: 'User not found' });
 
+    const friendRequest = receiver.friendRequests.id(requestId);
     if (!friendRequest) {
       return res.status(404).json({ message: 'Friend request not found' });
     }
 
-    // Add the sender to the receiver's friends list
-    receiver.friends.push(friendRequest.from);
+    const sender = await User.findById(friendRequest.from);
+    if (!sender) return res.status(404).json({ message: 'Sender not found' });
 
-    // Remove the friend request from the receiver's list
+    if (!receiver.friends.some((friend) => normalizeObjectId(friend) === normalizeObjectId(sender._id))) {
+      receiver.friends.push(sender._id);
+    }
+
+    if (!sender.friends.some((friend) => normalizeObjectId(friend) === normalizeObjectId(receiver._id))) {
+      sender.friends.push(receiver._id);
+    }
+
     receiver.friendRequests = receiver.friendRequests.filter(
-      (req) => req._id.toString() !== requestId,
+      (request) => normalizeObjectId(request._id) !== normalizeObjectId(requestId),
     );
 
     await receiver.save();
-
-    // Now, update the sender's friend list
-    const sender = await User.findById(friendRequest.from);
-    sender.friends.push(receiver._id);
-
-    // Optionally, you can remove the request from the sender's side as well if you were storing it
     await sender.save();
 
     res.status(200).json({ message: 'Friend request accepted' });
@@ -276,21 +298,20 @@ router.post('/accept-friend-request', async (req, res) => {
 
 // Decline Friend Request
 router.post('/decline-friend-request', async (req, res) => {
-  const { userId } = req.user; // The receiver of the friend request
-  const { requestId } = req.body; // The request ID to be declined
+  const { userId } = req.user;
+  const { requestId } = req.body;
 
   try {
-    // Find the receiver and the friend request
     const receiver = await User.findById(userId);
-    const friendRequest = receiver.friendRequests.id(requestId);
+    if (!receiver) return res.status(404).json({ message: 'User not found' });
 
+    const friendRequest = receiver.friendRequests.id(requestId);
     if (!friendRequest) {
       return res.status(404).json({ message: 'Friend request not found' });
     }
 
-    // Remove the friend request from the receiver's list
     receiver.friendRequests = receiver.friendRequests.filter(
-      (req) => req._id.toString() !== requestId,
+      (request) => normalizeObjectId(request._id) !== normalizeObjectId(requestId),
     );
 
     await receiver.save();
