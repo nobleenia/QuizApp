@@ -1,5 +1,4 @@
 const express = require('express');
-const rateLimit = () => (req, res, next) => next();
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const cors = require('cors');
@@ -19,18 +18,27 @@ const server = http.createServer(app);
 const port = process.env.PORT || 5000;
 const isProduction = process.env.NODE_ENV === 'production';
 
-const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:3000,http://localhost:5000')
-  .split(',')
-  .map((origin) => origin.trim())
-  .filter(Boolean);
-
-app.set('trust proxy', 1);
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://localhost:5000',
+  'http://127.0.0.1:5000',
+  process.env.CLIENT_URL,
+  process.env.RENDER_EXTERNAL_URL,
+].filter(Boolean);
 
 const corsOptions = {
   origin(origin, callback) {
-    if (!origin || allowedOrigins.includes('*') || allowedOrigins.includes(origin)) {
+    if (!origin) {
       return callback(null, true);
     }
+
+    const isAllowedOrigin = allowedOrigins.includes(origin);
+    const isRenderOrigin = /^https:\/\/[a-z0-9-]+\.onrender\.com$/i.test(origin);
+
+    if (isAllowedOrigin || isRenderOrigin) {
+      return callback(null, true);
+    }
+
     return callback(new Error(`CORS blocked origin: ${origin}`));
   },
   credentials: true,
